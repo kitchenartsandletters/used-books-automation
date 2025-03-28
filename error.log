@@ -1,0 +1,45 @@
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:00:00.871Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:00:00.873Z"}
+{"level":"error","message":"No variant found for inventory item 43244936822917","service":"used-books-automation","timestamp":"2025-03-28T19:02:59.292Z"}
+{"level":"error","message":"No variant found for inventory item 43070622400645","service":"used-books-automation","timestamp":"2025-03-28T19:03:28.687Z"}
+{"level":"error","message":"No variant found for inventory item 42849281540229","service":"used-books-automation","timestamp":"2025-03-28T19:03:28.909Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:10:15.626Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:10:15.628Z"}
+{"level":"error","message":"Error fetching product 12345678901234: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:11:28.851Z"}
+{"level":"error","message":"Error processing inventory change for product 12345678901234: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:11:28.855Z"}
+{"level":"error","message":"Error triggering product check: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T19:11:28.856Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:30:00.200Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:30:00.201Z"}
+{"level":"error","message":"Error fetching product 7135441617029: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:35:27.924Z"}
+{"level":"error","message":"Error processing inventory change for product 7135441617029: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:35:27.926Z"}
+{"level":"error","message":"Error triggering product check: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:35:27.927Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:35:49.006Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:35:49.008Z"}
+{"level":"error","message":"Error fetching product 7135441617029: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:39:52.690Z"}
+{"level":"error","message":"Error processing inventory change for product 7135441617029: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:39:52.693Z"}
+{"level":"error","message":"Error triggering product check: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:39:52.693Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:40:32.252Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:40:32.257Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:44:11.014Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:44:11.018Z"}
+{"level":"error","message":"Error fetching used books: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:55:33.858Z"}
+{"level":"error","message":"Error in scheduled job: client is not defined","service":"used-books-automation","timestamp":"2025-03-28T20:55:33.861Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T20:55:53.319Z"}
+{"level":"error","message":"Error fetching used books: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T20:55:53.320Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T20:55:53.320Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:00:00.696Z"}
+{"level":"error","message":"Error fetching used books: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:00:00.697Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:00:00.697Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:02:38.718Z"}
+{"level":"error","message":"Error fetching product 7135441617029: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:02:38.719Z"}
+{"level":"error","message":"Error processing inventory change for product 7135441617029: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:02:38.719Z"}
+{"level":"error","message":"Error triggering product check: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-28T21:02:38.720Z"}
+{"level":"error","message":"Error in GET request to products.json: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-28T21:16:53.198Z"}
+{"level":"error","message":"Error fetching used books: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-28T21:16:53.198Z"}
+{"level":"error","message":"Error in scheduled job: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-28T21:16:53.199Z"}
+{"level":"error","message":"Error fetching used books: config is not defined","service":"used-books-automation","timestamp":"2025-03-28T21:23:31.934Z"}
+{"level":"error","message":"Error in scheduled job: config is not defined","service":"used-books-automation","timestamp":"2025-03-28T21:23:31.939Z"}
+{"level":"error","message":"Error in GET request to products.json: API returned status 429: {\"errors\":\"Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.\"}","service":"used-books-automation","timestamp":"2025-03-28T21:32:12.228Z"}
+{"level":"error","message":"Error fetching used books: API returned status 429: {\"errors\":\"Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.\"}","service":"used-books-automation","timestamp":"2025-03-28T21:32:12.229Z"}
+{"level":"error","message":"Error in scheduled job: API returned status 429: {\"errors\":\"Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.\"}","service":"used-books-automation","timestamp":"2025-03-28T21:32:12.229Z"}
+{"level":"error","message":"Error looking up product: shopifyClient is not defined","service":"used-books-automation","timestamp":"2025-03-28T21:47:29.318Z"}
