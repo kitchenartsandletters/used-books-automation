@@ -33,3 +33,14 @@ This application is configured for deployment on Railway.
 ## License
 
 MIT
+
+Execution Timeline
+
+Phase 1 (Environment Setup): Day 1
+Phase 2 (Shopify API Integration): Days 1-2
+Phase 3 (Core Business Logic): Days 2-3
+Phase 4 (Webhooks and API Endpoints): Day 3
+Phase 5 (Express Server Setup): Day 4
+Phase 6 (Scheduled Jobs): Day 4
+Phase 7 (Deployment): Day 5
+Phase 8 (Testing): Days 5-6

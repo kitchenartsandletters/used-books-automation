@@ -1,108 +1,102 @@
-// src/services/notificationService.js
-const logger = require('../utils/logger');
-const nodemailer = require('nodemailer'); // You would need to install this
+// src/utils/notificationService.js
+const logger = require('./logger');
+const config = require('../../config/environment');
 
-class NotificationService {
-  constructor() {
-    // Configure transports based on environment variables
-    this.emailEnabled = process.env.ENABLE_EMAIL_NOTIFICATIONS === 'true';
-    this.slackEnabled = process.env.ENABLE_SLACK_NOTIFICATIONS === 'true';
-    
-    if (this.emailEnabled) {
-      this.emailTransport = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: process.env.EMAIL_SECURE === 'true',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD
-        }
-      });
-    }
-    
-    if (this.slackEnabled) {
-      // Configure Slack webhook (you would need to install a Slack client)
-      this.slackWebhookUrl = process.env.SLACK_WEBHOOK_URL;
-    }
+// Store last few notifications in memory
+const notificationHistory = [];
+
+/**
+ * Add a notification to the history
+ */
+function addToHistory(type, subject, message) {
+  const notification = {
+    timestamp: new Date().toISOString(),
+    type,
+    subject,
+    message
+  };
+  
+  notificationHistory.unshift(notification);
+  
+  // Keep only last 50 notifications
+  if (notificationHistory.length > 50) {
+    notificationHistory.pop();
   }
   
-  async sendNotification(level, message, details = {}) {
-    logger.info(`Sending ${level} notification: ${message}`);
-    
-    if (level === 'critical' && this.emailEnabled) {
-      await this.sendEmail(message, details);
-    }
-    
-    if (this.slackEnabled) {
-      await this.sendSlack(level, message, details);
-    }
-  }
-  
-  async sendEmail(subject, details) {
-    try {
-      const recipients = process.env.EMAIL_RECIPIENTS.split(',');
-      
-      await this.emailTransport.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: recipients.join(', '),
-        subject: `[ALERT] ${subject}`,
-        text: `
-          Alert: ${subject}
-          
-          Details:
-          ${JSON.stringify(details, null, 2)}
-          
-          Time: ${new Date().toISOString()}
-        `,
-        html: `
-          <h2>Alert: ${subject}</h2>
-          <p><strong>Details:</strong></p>
-          <pre>${JSON.stringify(details, null, 2)}</pre>
-          <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-        `
-      });
-      
-      logger.info('Email notification sent successfully');
-    } catch (error) {
-      logger.error(`Failed to send email notification: ${error.message}`);
-    }
-  }
-  
-  async sendSlack(level, message, details) {
-    try {
-      // Implementation would depend on your Slack client
-      // This is a placeholder
-      const response = await fetch(this.slackWebhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text: `*${level.toUpperCase()}*: ${message}`,
-          blocks: [
-            {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: `*${level.toUpperCase()}*: ${message}`
-              }
-            },
-            {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: "```" + JSON.stringify(details, null, 2) + "```"
-              }
-            }
-          ]
-        })
-      });
-      
-      logger.info('Slack notification sent successfully');
-    } catch (error) {
-      logger.error(`Failed to send Slack notification: ${error.message}`);
-    }
-  }
+  return notification;
 }
 
-module.exports = new NotificationService();
+/**
+ * Get notification history
+ */
+function getHistory(limit = 10) {
+  return notificationHistory.slice(0, limit);
+}
+
+/**
+ * Log a notification (for now, we're just using the logger)
+ * In a future phase, this could be extended to email, Slack, etc.
+ */
+function notify(type, subject, message) {
+  const notification = addToHistory(type, subject, message);
+  
+  switch (type) {
+    case 'error':
+      logger.error(`[NOTIFICATION] ${subject}: ${message}`);
+      break;
+    case 'warning':
+      logger.warn(`[NOTIFICATION] ${subject}: ${message}`);
+      break;
+    case 'info':
+    default:
+      logger.info(`[NOTIFICATION] ${subject}: ${message}`);
+  }
+  
+  return notification;
+}
+
+/**
+ * Log a critical error notification
+ */
+function notifyCriticalError(error, context = {}) {
+  const subject = 'Critical Error Detected';
+  let message = error.message;
+  
+  if (context.productId) {
+    message += ` | Product ID: ${context.productId}`;
+  }
+  
+  if (context.handle) {
+    message += ` | Handle: ${context.handle}`;
+  }
+  
+  return notify('error', subject, message);
+}
+
+/**
+ * Log a system status notification
+ */
+function notifySystemStatus(stats) {
+  const subject = 'System Status';
+  const message = `Active Redirects: ${stats.totalRedirects}, Published Books: ${stats.publishedProducts}, Unpublished Books: ${stats.unpublishedProducts}`;
+  
+  return notify('info', subject, message);
+}
+
+/**
+ * Log an inventory mismatch notification
+ */
+function notifyInventoryMismatch(product, expected, actual) {
+  const subject = 'Inventory Mismatch';
+  const message = `Product: ${product.title} (${product.id}) | Expected: ${expected ? 'In Stock' : 'Out of Stock'} | Actual: ${actual ? 'In Stock' : 'Out of Stock'}`;
+  
+  return notify('warning', subject, message);
+}
+
+module.exports = {
+  notify,
+  notifyCriticalError,
+  notifySystemStatus,
+  notifyInventoryMismatch,
+  getHistory
+};

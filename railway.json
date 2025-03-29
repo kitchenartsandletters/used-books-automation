@@ -8,6 +8,31 @@
       "healthcheckPath": "/health",
       "healthcheckTimeout": 60,
       "restartPolicyType": "ON_FAILURE",
-      "restartPolicyMaxRetries": 3
+      "restartPolicyMaxRetries": 3,
+      "envVarGroups": [
+        {
+          "name": "shopify-credentials",
+          "envVars": [
+            {"name": "SHOPIFY_API_KEY", "value": "FROM_RAILWAY"},
+            {"name": "SHOPIFY_API_SECRET", "value": "FROM_RAILWAY"},
+            {"name": "SHOPIFY_ACCESS_TOKEN", "value": "FROM_RAILWAY"},
+            {"name": "SHOP_URL", "value": "FROM_RAILWAY"},
+            {"name": "WEBHOOK_SECRET", "value": "FROM_RAILWAY"}
+          ]
+        },
+        {
+          "name": "notification-settings",
+          "envVars": [
+            {"name": "EMAIL_NOTIFICATIONS_ENABLED", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_HOST", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_PORT", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_SECURE", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_USER", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_PASSWORD", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_FROM", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_RECIPIENT", "value": "FROM_RAILWAY"}
+          ]
+        }
+      ]
     }
   }

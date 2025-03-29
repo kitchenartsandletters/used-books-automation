@@ -43,3 +43,44 @@
 {"level":"error","message":"Error fetching used books: API returned status 429: {\"errors\":\"Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.\"}","service":"used-books-automation","timestamp":"2025-03-28T21:32:12.229Z"}
 {"level":"error","message":"Error in scheduled job: API returned status 429: {\"errors\":\"Exceeded 2 calls per second for api client. Reduce request rates to resume uninterrupted service.\"}","service":"used-books-automation","timestamp":"2025-03-28T21:32:12.229Z"}
 {"level":"error","message":"Error looking up product: shopifyClient is not defined","service":"used-books-automation","timestamp":"2025-03-28T21:47:29.318Z"}
+{"level":"error","message":"Error fetching used books: Cannot read properties of undefined (reading 'replace')","service":"used-books-automation","timestamp":"2025-03-29T14:53:01.869Z"}
+{"level":"error","message":"Error in scheduled job: Cannot read properties of undefined (reading 'replace')","service":"used-books-automation","timestamp":"2025-03-29T14:53:01.870Z"}
+{"level":"error","message":"Error in GET request to products.json: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:21.120Z"}
+{"level":"error","message":"Error fetching used books: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:21.120Z"}
+{"level":"error","message":"Error in scheduled job: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:21.120Z"}
+{"level":"error","message":"Error in GET request to products.json: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:42.562Z"}
+{"level":"error","message":"Error fetching used books: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:42.562Z"}
+{"level":"error","message":"Error in scheduled job: fetch failed","service":"used-books-automation","timestamp":"2025-03-29T14:55:42.562Z"}
+{"level":"error","message":"Error in GET request to products.json: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:56:53.162Z"}
+{"level":"error","message":"Error fetching used books: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:56:53.168Z"}
+{"level":"error","message":"Error in scheduled job: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:56:53.168Z"}
+{"level":"error","message":"Error in GET request to products.json: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:57:07.963Z"}
+{"level":"error","message":"Error fetching used books: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:57:07.965Z"}
+{"level":"error","message":"Error in scheduled job: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T14:57:07.965Z"}
+{"level":"error","message":"Error in GET request to products.json: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T15:00:00.971Z"}
+{"level":"error","message":"Error fetching used books: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T15:00:00.972Z"}
+{"level":"error","message":"Error in scheduled job: Shop URL is not defined in config","service":"used-books-automation","timestamp":"2025-03-29T15:00:00.972Z"}
+{"level":"error","message":"Error in GET request to products.json: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-29T15:17:23.002Z"}
+{"level":"error","message":"Error fetching used books: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-29T15:17:23.002Z"}
+{"level":"error","message":"Error in scheduled job: API returned status 400: {\"errors\":{\"page\":\"page cannot be passed. See https:\\/\\/shopify.dev\\/api\\/usage\\/pagination-rest for more information.\"}}","service":"used-books-automation","timestamp":"2025-03-29T15:17:23.003Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T15:58:48.992Z"}
+{"level":"error","message":"Error fetching product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T15:58:48.992Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T15:58:48.992Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T15:58:48.992Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:00:48.486Z"}
+{"level":"error","message":"Error fetching product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:00:48.487Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:00:48.487Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:00:48.487Z"}
+{"level":"error","message":"Error in GET request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:02:37.684Z"}
+{"level":"error","message":"Error fetching product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:02:37.685Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:02:37.685Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:02:37.685Z"}
+{"level":"error","message":"Error fetching inventory for item 36704205242501: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:17:49.582Z"}
+{"level":"error","message":"Error checking stock for variant 34812705308805: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:17:49.582Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:17:49.582Z"}
+{"level":"error","message":"Error in scheduled job: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:17:49.583Z"}
+{"level":"error","message":"Error in PUT request to [object Object]: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.388Z"}
+{"level":"error","message":"Error unpublishing product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.389Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.389Z"}
+{"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.389Z"}
+{"level":"error","message":"Error finding redirect for path test-book-title-used-very-good: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:40:19.463Z"}
