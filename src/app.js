@@ -42,6 +42,29 @@ app.get('/health', (req, res) => {
 
 app.get('/api/test-client', apiController.testShopifyClient);
 
+// SendGrid endpoint test for email notifications
+app.get('/api/test-email', async (req, res) => {
+    try {
+      const emailService = require('./utils/emailService');
+      const result = await emailService.sendEmail(
+        'Test Email', 
+        '<h1>Test Email</h1><p>This is a test email from your Used Books Automation app.</p>'
+      );
+      
+      if (result) {
+        res.status(200).json({ success: true, message: 'Test email sent successfully' });
+      } else {
+        res.status(500).json({ success: false, message: 'Failed to send test email' });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error sending test email', 
+        error: error.message 
+      });
+    }
+  });
+
 // Error handler
 app.use((err, req, res, next) => {
   logger.error(`Unhandled error: ${err.message}`);

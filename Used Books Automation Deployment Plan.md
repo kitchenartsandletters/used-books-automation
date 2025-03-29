@@ -1,89 +1,100 @@
-# Used Books Automation Deployment Plan
+# Used Books Automation - Railway Deployment Plan
 
 ## Pre-Deployment Tasks
 
-1. **Update Dependencies**
+1. **Environment Variables Setup**
+   - Create all required environment variables in Railway dashboard:
+     - `SHOPIFY_API_KEY` - Your Shopify API key
+     - `SHOPIFY_API_SECRET` - Your Shopify API secret
+     - `SHOPIFY_ACCESS_TOKEN` - Your Shopify access token
+     - `SHOP_URL` - Your Shopify store URL (without https://)
+     - `WEBHOOK_SECRET` - Secret for webhook validation
+     - `PORT` - Port for the application (Railway will set this automatically)
+     - `NODE_ENV` - Set to "production"
+
+2. **Repository Preparation**
+   - Ensure all code is committed to the repository
+   - Create a "production" branch if needed
+
+3. **Dependencies Check**
    - Run `npm audit` to check for vulnerabilities
-   - Update packages if necessary with `npm update`
-   - Ensure all dependencies are explicitly declared in package.json
-
-2. **Environment Configuration**
-   - Create all required environment variables in Railway dashboard
-   - Ensure webhook URLs are pointing to the production domain
-   - Test environment configuration locally before pushing
-
-3. **Database Preparation**
-   - Create backups directory in the project root
-   - Setup filesystem permissions for the backups directory
+   - Update any outdated dependencies
+   - Make sure all dependencies are listed in package.json
 
 ## Deployment Steps
 
 1. **Initial Deployment**
-   - Push code to GitHub repository
-   - Connect Railway to the GitHub repository
-   - Select the correct branch (main/master)
-   - Configure build settings as per railway.json
-   - Configure environment variables in Railway dashboard
+   - Connect your GitHub repository to Railway
+   - Select the appropriate branch (main/production)
+   - Choose Node.js environment
+   - Set up deployment settings:
+     - Build Command: `npm install`
+     - Start Command: `npm start`
+     - Health Check Path: `/health`
 
-2. **Webhook Registration**
-   - After deployment, run the webhook registration script:
-     `railway run npm run register-webhooks`
-   - Verify webhook registration in Shopify admin
+2. **First-Time Setup**
+   - After initial deployment:
+     - Wait for the build to complete
+     - Verify the application is running by checking the health endpoint
+     - Register webhooks by running the webhook registration script:
+       ```
+       railway run npm run register-webhooks
+       ```
 
 3. **Initial Data Scan**
-   - Trigger the initial scan manually via the API:
-     `curl -X POST https://your-app-url.railway.app/api/scan-all`
-   - Check logs to ensure scan completes successfully
+   - Run the first scan to process all used books:
+     ```
+     railway run npm run scan-all
+     ```
+   - Check logs to ensure the scan completes successfully
 
-4. **Health Check Verification**
-   - Verify the health endpoint is working:
-     `curl https://your-app-url.railway.app/health`
-   - Ensure status returns "healthy"
+## Post-Deployment Verification
 
-## Post-Deployment Monitoring
+1. **Dashboard Access**
+   - Verify dashboard is accessible at `/dashboard`
 
-1. **Initial Monitoring Period (24 hours)**
-   - Check logs frequently for any errors
-   - Verify that scheduled jobs are running as expected
-   - Monitor webhook deliveries in Shopify admin
+2. **Webhook Testing**
+   - Test webhook by updating inventory for a used book in Shopify
+   - Verify webhook is received and processed correctly
+
+3. **Backup System**
+   - Verify backup directory is created
+   - Run a manual backup to test:
+     ```
+     railway run node -e "require('./src/utils/backupService').backupRedirects()"
+     ```
+
+4. **SEO Management**
+   - Verify canonical URL is set for used book products
+   - Check metafields in Shopify admin
+
+## Monitoring and Maintenance
+
+1. **Logs and Alerts**
+   - Set up Railway log alerts for important events
+   - Check logs regularly in the Railway dashboard
 
 2. **Performance Monitoring**
-   - Check Railway dashboard for CPU and memory usage
-   - Adjust resource allocation if necessary
+   - Monitor application performance in Railway metrics
+   - Check for high CPU or memory usage
 
-3. **Functional Testing**
-   - Test inventory updates by changing stock levels in Shopify
-   - Verify that books are published/unpublished correctly
-   - Confirm that redirects are being created/removed as expected
+3. **Regular Backups**
+   - Verify daily backups are being created
+   - Periodically download backups from Railway
+
+4. **Updates and Maintenance**
+   - Plan regular updates for dependencies
+   - Schedule maintenance during off-peak hours
 
 ## Rollback Plan
 
-1. **Identifying Need for Rollback**
-   - Multiple errors in logs related to core functionality
-   - Webhook failures
-   - Unexpected product visibility issues
+1. **Identifying Issues**
+   - Monitor logs for unexpected errors
+   - Check dashboard for system status
 
-2. **Rollback Procedure**
-   - Revert to the last working commit in GitHub
-   - Redeploy using Railway
-   - Restore the most recent redirect backup if necessary
+2. **Quick Rollback**
+   - Use Railway's rollback feature to revert to previous deployment
+   - Or deploy a previous known-good commit
 
-3. **Post-Rollback Actions**
-   - Notify team of the rollback
-   - Investigate issues that caused the rollback
-   - Create a plan to address issues before next deployment
-
-## Long-term Maintenance
-
-1. **Regular Backups**
-   - Verify daily backups are being created
-   - Periodically download backups from the server for safekeeping
-
-2. **Monitoring and Alerts**
-   - Set up Railway alerts for application failures
-   - Configure email notifications for critical errors
-   - Review daily status reports
-
-3. **Update Schedule**
-   - Plan regular updates for dependencies
-   - Schedule non-emergency updates during low-traffic periods
+3. **Data Recovery**
+   - Restore redirects from the most recent backup if needed

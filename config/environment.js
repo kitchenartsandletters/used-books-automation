@@ -1,4 +1,4 @@
-// config/environment.js
+// config/environment.js (updated for SendGrid)
 require('dotenv').config();
 
 module.exports = {
@@ -14,14 +14,11 @@ module.exports = {
   },
   notifications: {
     email: {
-      enabled: process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true',
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT) || 587,
-      secure: process.env.EMAIL_SECURE === 'true',
-      user: process.env.EMAIL_USER,
-      password: process.env.EMAIL_PASSWORD,
+      enabled: process.env.EMAIL_ENABLED === 'true',
+      provider: 'sendgrid',
+      apiKey: process.env.SENDGRID_API_KEY,
       from: process.env.EMAIL_FROM || 'used-books-automation@example.com',
-      defaultRecipient: process.env.EMAIL_RECIPIENT
+      to: process.env.EMAIL_TO || 'admin@example.com',
     }
   }
 };
