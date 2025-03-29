@@ -23,14 +23,10 @@
         {
           "name": "notification-settings",
           "envVars": [
-            {"name": "EMAIL_NOTIFICATIONS_ENABLED", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_HOST", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_PORT", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_SECURE", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_USER", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_PASSWORD", "value": "FROM_RAILWAY"},
+            {"name": "EMAIL_ENABLED", "value": "true"},
+            {"name": "SENDGRID_API_KEY", "value": "FROM_RAILWAY"},
             {"name": "EMAIL_FROM", "value": "FROM_RAILWAY"},
-            {"name": "EMAIL_RECIPIENT", "value": "FROM_RAILWAY"}
+            {"name": "EMAIL_TO", "value": "FROM_RAILWAY"}
           ]
         }
       ]
