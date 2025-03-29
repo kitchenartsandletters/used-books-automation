@@ -84,3 +84,8 @@
 {"level":"error","message":"Error processing inventory change for product 5238897279109: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.389Z"}
 {"level":"error","message":"Error in scheduled job: Unexpected token '<', \"<html>\n  <\"... is not valid JSON","service":"used-books-automation","timestamp":"2025-03-29T16:20:28.389Z"}
 {"level":"error","message":"Error finding redirect for path test-book-title-used-very-good: Cannot read properties of undefined (reading '0')","service":"used-books-automation","timestamp":"2025-03-29T16:40:19.463Z"}
+{"level":"error","message":"Error in GET request to products/5238897279109.json: skipCache is not defined","service":"used-books-automation","timestamp":"2025-03-29T21:41:21.383Z"}
+{"level":"error","message":"Error fetching product 5238897279109: skipCache is not defined","service":"used-books-automation","timestamp":"2025-03-29T21:41:21.384Z"}
+{"level":"error","message":"Error processing inventory change for product 5238897279109: skipCache is not defined","service":"used-books-automation","timestamp":"2025-03-29T21:41:21.384Z"}
+{"level":"error","message":"Error in scheduled job: skipCache is not defined","service":"used-books-automation","timestamp":"2025-03-29T21:41:21.403Z"}
+{"level":"error","message":"[NOTIFICATION] Critical Error Detected: skipCache is not defined | Product ID: 5238897279109 | Context: Inventory change processing","service":"used-books-automation","timestamp":"2025-03-29T21:41:21.694Z"}
