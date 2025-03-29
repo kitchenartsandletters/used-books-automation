@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest",
-    "register-webhooks": "node scripts/register-webhooks.js"
+    "register-webhooks": "node scripts/register-webhooks.js",
+    "scan-all": "curl -X POST http://localhost:$PORT/api/scan-all"
   },
   "keywords": [],
   "author": "",
