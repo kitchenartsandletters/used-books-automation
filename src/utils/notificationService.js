@@ -1,9 +1,18 @@
-// src/utils/notificationService.js (updated for SendGrid)
+// src/utils/notificationService.js
+const sgMail = require('@sendgrid/mail');
+const config = require('../../config/environment');
 const logger = require('./logger');
-const emailService = require('./emailService');
 
-// Store last few notifications in memory
+// Store notification history in memory
 const notificationHistory = [];
+
+// Initialize SendGrid with API key
+if (config.notifications.email.enabled && config.notifications.email.apiKey) {
+  sgMail.setApiKey(config.notifications.email.apiKey);
+  logger.info('SendGrid initialized for email notifications');
+} else {
+  logger.warn('SendGrid not initialized: email notifications disabled or API key missing');
+}
 
 /**
  * Add a notification to the history
@@ -34,6 +43,44 @@ function getHistory(limit = 10) {
 }
 
 /**
+ * Send an email using SendGrid
+ */
+async function sendEmail(subject, message, recipient = null) {
+  // Check if email notifications are enabled
+  if (!config.notifications.email.enabled) {
+    logger.info(`Email notifications disabled. Would have sent: ${subject}`);
+    return false;
+  }
+  
+  // Check if API key is set
+  if (!config.notifications.email.apiKey) {
+    logger.warn(`SendGrid API key not set. Cannot send email: ${subject}`);
+    return false;
+  }
+  
+  try {
+    const msg = {
+      to: recipient || config.notifications.email.to,
+      from: config.notifications.email.from,
+      subject: `[Used Books Automation] ${subject}`,
+      html: message,
+    };
+    
+    await sgMail.send(msg);
+    logger.info(`Email sent: ${subject} to ${msg.to}`);
+    return true;
+  } catch (error) {
+    logger.error(`Error sending email: ${error.message}`);
+    
+    if (error.response) {
+      logger.error(`SendGrid error details: ${JSON.stringify(error.response.body)}`);
+    }
+    
+    return false;
+  }
+}
+
+/**
  * Log a notification and send email for critical ones
  */
 async function notify(type, subject, message, sendEmail = false) {
@@ -43,14 +90,14 @@ async function notify(type, subject, message, sendEmail = false) {
   switch (type) {
     case 'error':
       logger.error(`[NOTIFICATION] ${subject}: ${message}`);
-      // Always send email for errors
-      await emailService.sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
+      // Always send email for errors if email is enabled
+      await sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
       break;
     case 'warning':
       logger.warn(`[NOTIFICATION] ${subject}: ${message}`);
       // Only send email for warnings if explicitly requested
       if (sendEmail) {
-        await emailService.sendEmail(`WARNING: ${subject}`, createHtmlMessage(type, subject, message));
+        await sendEmail(`WARNING: ${subject}`, createHtmlMessage(type, subject, message));
       }
       break;
     case 'info':
@@ -58,7 +105,7 @@ async function notify(type, subject, message, sendEmail = false) {
       logger.info(`[NOTIFICATION] ${subject}: ${message}`);
       // Only send email for info if explicitly requested
       if (sendEmail) {
-        await emailService.sendEmail(subject, createHtmlMessage(type, subject, message));
+        await sendEmail(subject, createHtmlMessage(type, subject, message));
       }
   }
   
@@ -87,7 +134,7 @@ function createHtmlMessage(type, subject, message) {
 }
 
 /**
- * Log a critical error notification
+ * Notify of a critical error
  */
 async function notifyCriticalError(error, context = {}) {
   const subject = 'Critical Error Detected';
@@ -105,7 +152,7 @@ async function notifyCriticalError(error, context = {}) {
     message += ` | Context: ${context.context}`;
   }
   
-  // Add stack trace for detailed debugging
+  // Create HTML message with stack trace
   const htmlMessage = `
     <p><strong>Error:</strong> ${error.message}</p>
     <p><strong>Time:</strong> ${new Date().toISOString()}</p>
@@ -116,14 +163,14 @@ async function notifyCriticalError(error, context = {}) {
     <pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto;">${error.stack}</pre>
   `;
   
-  // Always send email for critical errors
-  await emailService.sendEmail(`CRITICAL ERROR: ${subject}`, htmlMessage);
+  // Always send email for critical errors if email is enabled
+  await sendEmail(`CRITICAL ERROR: ${subject}`, htmlMessage);
   
   return notify('error', subject, message);
 }
 
 /**
- * Log a system status notification
+ * Notify about system status
  */
 async function notifySystemStatus(stats) {
   const subject = 'System Status Report';
@@ -157,20 +204,20 @@ async function notifySystemStatus(stats) {
     <p>This is an automated status report from your Used Books Automation system.</p>
   `;
   
-  // Send email for daily status report
-  await emailService.sendEmail(subject, htmlMessage);
+  // Send email for status report if email is enabled
+  await sendEmail(subject, htmlMessage);
   
   return notify('info', subject, message);
 }
 
 /**
- * Log an inventory mismatch notification
+ * Notify about inventory mismatch
  */
 async function notifyInventoryMismatch(product, expected, actual) {
   const subject = 'Inventory Mismatch';
   const message = `Product: ${product.title} (${product.id}) | Expected: ${expected ? 'In Stock' : 'Out of Stock'} | Actual: ${actual ? 'In Stock' : 'Out of Stock'}`;
   
-  // Send email for inventory mismatches
+  // Create HTML message
   const htmlMessage = `
     <h2>Inventory Mismatch Detected</h2>
     <p><strong>Product:</strong> ${product.title}</p>
@@ -182,13 +229,15 @@ async function notifyInventoryMismatch(product, expected, actual) {
     <p>Please check the inventory and publishing status of this product.</p>
   `;
   
-  await emailService.sendEmail(subject, htmlMessage);
+  // Send email for inventory mismatch if email is enabled
+  await emailService.sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
   
   return notify('warning', subject, message, true);
 }
 
 module.exports = {
   notify,
+  sendEmail,
   notifyCriticalError,
   notifySystemStatus,
   notifyInventoryMismatch,
