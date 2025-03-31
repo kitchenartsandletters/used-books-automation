@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const logger = require('./logger');
 const shopifyClient = require('./shopifyClient');
-const notificationService = require('./notificationService');
+const notificationService = require('./utils/notificationService');
 
 // Set up backup directory
 const BACKUP_DIR = path.join(__dirname, '../../backups');
