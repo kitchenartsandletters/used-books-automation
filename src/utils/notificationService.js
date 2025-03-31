@@ -230,7 +230,7 @@ async function notifyInventoryMismatch(product, expected, actual) {
   `;
   
   // Send email for inventory mismatch if email is enabled
-  await sendEmail(subject, htmlMessage);
+  await emailService.sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
   
   return notify('warning', subject, message, true);
 }

@@ -29,7 +29,7 @@ function isCacheableRequest(path) {
 
 const shopifyClient = {
     // Update the get method in shopifyClient.js to handle paths correctly
-    get: async function(path, params = {}) {
+    get: async function(path, params = {}, skipCache = false) {
         try {
         // Check if path is an object and convert it properly
         if (typeof path === 'object') {
