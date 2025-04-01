@@ -1,0 +1,264 @@
+<%- include('../layouts/dashboard-header', { title: title }) %>
+
+<div class="dashboard-content">
+  <div class="container-fluid">
+    <!-- Dashboard header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3">Used Books Management</h1>
+      
+      <div class="actions">
+        <a href="/dashboard/books/export" class="btn btn-outline-primary mr-2">
+          <i class="fas fa-file-export"></i> Export
+        </a>
+        <form action="/dashboard/scan" method="post" class="d-inline">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Run Full Scan
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Flash messages -->
+    <% if (locals.messages && messages.success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= messages.success %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
+    <% if (locals.messages && messages.error) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= messages.error %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
+    <!-- Filter and search -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filter Books</h6>
+      </div>
+      <div class="card-body">
+        <form id="books-filter-form" class="row align-items-center">
+          <div class="col-md-4 mb-3">
+            <label for="filter">Status</label>
+            <select id="filter" name="filter" class="form-control">
+              <option value="all" <%= filter === 'all' ? 'selected' : '' %>>All Books</option>
+              <option value="published" <%= filter === 'published' ? 'selected' : '' %>>Published Only</option>
+              <option value="unpublished" <%= filter === 'unpublished' ? 'selected' : '' %>>Unpublished Only</option>
+            </select>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label for="search">Search</label>
+            <input 
+              type="text" 
+              id="search" 
+              name="search" 
+              class="form-control" 
+              placeholder="Search by title or handle..." 
+              value="<%= searchTerm || '' %>"
+            >
+          </div>
+          
+          <div class="col-md-2 mb-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fas fa-search"></i> Filter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Books Table -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Used Books (<%= pagination.totalBooks %>)</h6>
+      </div>
+      <div class="card-body">
+        <% if (books && books.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Handle</th>
+                  <th>Status</th>
+                  <th>Inventory</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% books.forEach(book => { %>
+                  <tr>
+                    <td><%= book.title %></td>
+                    <td><small><code><%= book.handle %></code></small></td>
+                    <td>
+                      <% if (book.published_at) { %>
+                        <span class="badge badge-success">Published</span>
+                      <% } else { %>
+                        <span class="badge badge-warning">Unpublished</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% 
+                        const totalInventory = book.variants.reduce((sum, variant) => {
+                          return sum + (variant.inventory_quantity || 0);
+                        }, 0);
+                      %>
+                      
+                      <% if (totalInventory > 0) { %>
+                        <span class="badge badge-success"><%= totalInventory %> in stock</span>
+                      <% } else { %>
+                        <span class="badge badge-danger">Out of stock</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <!-- View in Shopify -->
+                      <a 
+                        href="https://<%= process.env.SHOP_URL %>/admin/products/<%= book.id %>"
+                        class="btn btn-sm btn-info"
+                        target="_blank"
+                        data-toggle="tooltip"
+                        title="View in Shopify"
+                      >
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                      
+                      <!-- Publish/Unpublish -->
+                      <% if (book.published_at) { %>
+                        <form 
+                          action="/dashboard/books/<%= book.id %>/unpublish" 
+                          method="post" 
+                          class="d-inline"
+                          data-confirm="Are you sure you want to unpublish this book?"
+                        >
+                          <button 
+                            type="submit" 
+                            class="btn btn-sm btn-warning"
+                            data-toggle="tooltip"
+                            title="Unpublish"
+                          >
+                            <i class="fas fa-eye-slash"></i>
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <form 
+                          action="/dashboard/books/<%= book.id %>/publish" 
+                          method="post" 
+                          class="d-inline"
+                          data-confirm="Are you sure you want to publish this book?"
+                        >
+                          <button 
+                            type="submit" 
+                            class="btn btn-sm btn-success"
+                            data-toggle="tooltip"
+                            title="Publish"
+                          >
+                            <i class="fas fa-eye"></i>
+                          </button>
+                        </form>
+                      <% } %>
+                      
+                      <!-- Manual Check -->
+                      <form 
+                        action="/api/products/<%= book.id %>/check" 
+                        method="post" 
+                        class="d-inline"
+                      >
+                        <button 
+                          type="submit" 
+                          class="btn btn-sm btn-primary"
+                          data-toggle="tooltip"
+                          title="Manual Check"
+                        >
+                          <i class="fas fa-sync"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+              Showing <%= (pagination.page - 1) * pagination.limit + 1 %> to 
+              <%= Math.min(pagination.page * pagination.limit, pagination.totalBooks) %> of 
+              <%= pagination.totalBooks %> books
+            </div>
+            
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <!-- Previous page -->
+                <li class="page-item <%= pagination.hasPrevPage ? '' : 'disabled' %>">
+                  <a 
+                    class="page-link" 
+                    href="/dashboard/books?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %><%= searchTerm ? '&search=' + searchTerm : '' %><%= filter !== 'all' ? '&filter=' + filter : '' %>"
+                    <%= pagination.hasPrevPage ? '' : 'tabindex="-1" aria-disabled="true"' %>
+                  >
+                    Previous
+                  </a>
+                </li>
+                
+                <!-- Page numbers -->
+                <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                  <% if (
+                    i === 1 || 
+                    i === pagination.totalPages || 
+                    (i >= pagination.page - 1 && i <= pagination.page + 1)
+                  ) { %>
+                    <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+                      <a 
+                        class="page-link" 
+                        href="/dashboard/books?page=<%= i %>&limit=<%= pagination.limit %><%= searchTerm ? '&search=' + searchTerm : '' %><%= filter !== 'all' ? '&filter=' + filter : '' %>"
+                      >
+                        <%= i %>
+                      </a>
+                    </li>
+                  <% } else if (
+                    (i === 2 && pagination.page > 3) || 
+                    (i === pagination.totalPages - 1 && pagination.page < pagination.totalPages - 2)
+                  ) { %>
+                    <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                    </li>
+                  <% } %>
+                <% } %>
+                
+                <!-- Next page -->
+                <li class="page-item <%= pagination.hasNextPage ? '' : 'disabled' %>">
+                  <a 
+                    class="page-link" 
+                    href="/dashboard/books?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %><%= searchTerm ? '&search=' + searchTerm : '' %><%= filter !== 'all' ? '&filter=' + filter : '' %>"
+                    <%= pagination.hasNextPage ? '' : 'tabindex="-1" aria-disabled="true"' %>
+                  >
+                    Next
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        <% } else { %>
+          <div class="text-center py-5">
+            <i class="fas fa-book fa-4x mb-3 text-gray-300"></i>
+            <p class="lead text-gray-500">No books found matching your criteria.</p>
+            <% if (searchTerm || filter !== 'all') { %>
+              <a href="/dashboard/books" class="btn btn-outline-primary mt-3">
+                Clear Filters
+              </a>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/dashboard-footer') %>

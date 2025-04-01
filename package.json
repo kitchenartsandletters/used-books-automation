@@ -17,9 +17,14 @@
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
     "@shopify/shopify-api": "^11.11.1",
+    "bcrypt": "^5.1.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
     "winston": "^3.17.0"

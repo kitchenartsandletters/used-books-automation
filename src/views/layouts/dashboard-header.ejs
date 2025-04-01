@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Used Books Automation' %></title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+  
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/dashboard.css">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3>Used Books Automation</h3>
+      </div>
+      
+      <div class="sidebar-user">
+        <div class="user-info">
+          <span class="user-name"><%= user.name || user.username %></span>
+          <span class="user-role"><%= user.role %></span>
+        </div>
+      </div>
+      
+      <ul class="sidebar-nav">
+        <li class="nav-item <%= currentPath === '/dashboard' ? 'active' : '' %>">
+          <a class="nav-link" href="/dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        
+        <li class="nav-item <%= currentPath === '/dashboard/books' ? 'active' : '' %>">
+          <a class="nav-link" href="/dashboard/books">
+            <i class="fas fa-book"></i>
+            <span>Used Books</span>
+          </a>
+        </li>
+        
+        <li class="nav-item <%= currentPath === '/dashboard/redirects' ? 'active' : '' %>">
+          <a class="nav-link" href="/dashboard/redirects">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Redirects</span>
+          </a>
+        </li>
+        
+        <li class="nav-item <%= currentPath === '/dashboard/logs' ? 'active' : '' %>">
+          <a class="nav-link" href="/dashboard/logs">
+            <i class="fas fa-history"></i>
+            <span>System Logs</span>
+          </a>
+        </li>
+        
+        <li class="nav-item <%= currentPath === '/dashboard/settings' ? 'active' : '' %>">
+          <a class="nav-link" href="/dashboard/settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/auth/logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <small>&copy; <%= new Date().getFullYear() %> Used Books Automation</small>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main">
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <!-- Sidebar Toggle (Topbar) -->
+        <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
+          <i class="fa fa-bars"></i>
+        </button>
+        
+        <!-- Topbar Search -->
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <div class="input-group">
+            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button">
+                <i class="fas fa-search fa-sm"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+        
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+          <!-- Alerts Dropdown -->
+          <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-bell fa-fw"></i>
+              <!-- Counter - Alerts -->
+              <span class="badge badge-danger badge-counter">
+                <%= notifications && notifications.filter(n => n.type === 'error').length || '0' %>
+              </span>
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+              <h6 class="dropdown-header">
+                Alerts Center
+              </h6>
+              <% if (notifications && notifications.length > 0) { %>
+                <% notifications.slice(0, 3).forEach(notification => { %>
+                  <a class="dropdown-item d-flex align-items-center" href="/dashboard/logs">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-<%= notification.type === 'error' ? 'danger' : notification.type === 'warning' ? 'warning' : 'primary' %>">
+                        <i class="fas <%= notification.type === 'error' ? 'fa-exclamation-triangle' : notification.type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle' %> text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500"><%= new Date(notification.timestamp).toLocaleString() %></div>
+                      <span class="<%= notification.type === 'error' ? 'text-danger' : notification.type === 'warning' ? 'text-warning' : '' %>">
+                        <%= notification.subject %>
+                      </span>
+                    </div>
+                  </a>
+                <% }) %>
+              <% } else { %>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div>
+                    <span class="font-weight-bold">No new alerts</span>
+                  </div>
+                </a>
+              <% } %>
+              <a class="dropdown-item text-center small text-gray-500" href="/dashboard/logs">Show All Alerts</a>
+            </div>
+          </li>
+          
+          <div class="topbar-divider d-none d-sm-block"></div>
+          
+          <!-- User Information -->
+          <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.name || user.username %></span>
+              <div class="img-profile rounded-circle bg-primary text-white d-flex align-items-center justify-content-center">
+                <span><%= (user.name || user.username).charAt(0).toUpperCase() %></span>
+              </div>
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+              <a class="dropdown-item" href="/dashboard/settings">
+                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                Settings
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/auth/logout">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- End of Topbar -->

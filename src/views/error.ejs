@@ -1,0 +1,70 @@
+<%- include('layouts/header', { title: title || 'Error' }) %>
+
+<div class="error-container">
+  <div class="error-content">
+    <h1><%= error.status || 500 %></h1>
+    <h2><%= message %></h2>
+    
+    <% if (error.stack && process.env.NODE_ENV !== 'production') { %>
+      <div class="error-stack">
+        <pre><%= error.stack %></pre>
+      </div>
+    <% } %>
+    
+    <div class="error-actions">
+      <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+      <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+  }
+  
+  .error-content {
+    max-width: 800px;
+    text-align: center;
+  }
+  
+  .error-content h1 {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+    color: #dc3545;
+  }
+  
+  .error-content h2 {
+    margin-bottom: 2rem;
+    color: #343a40;
+  }
+  
+  .error-stack {
+    margin: 2rem 0;
+    text-align: left;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+  }
+  
+  .error-stack pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+  }
+  
+  .error-actions {
+    margin-top: 2rem;
+  }
+  
+  .error-actions .btn {
+    margin: 0 0.5rem;
+  }
+</style>
+
+<%- include('layouts/footer') %>

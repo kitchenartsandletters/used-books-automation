@@ -1,0 +1,272 @@
+<%- include('../layouts/dashboard-header', { title: title }) %>
+
+<div class="dashboard-content">
+  <div class="container-fluid">
+    <!-- Dashboard header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3">Dashboard Overview</h1>
+      
+      <div class="actions">
+        <form action="/dashboard/scan" method="post" class="d-inline">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sync-alt"></i> Run Full Scan
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Flash messages -->
+    <% if (locals.messages && messages.success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= messages.success %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
+    <% if (locals.messages && messages.error) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= messages.error %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
+    <!-- Stats cards -->
+    <div class="row">
+      <!-- Total Products -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Total Used Books
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.totalProducts %></div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-book fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Recent Backups and Last Errors -->
+    <div class="row">
+      <!-- Recent Backups -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Backups</h6>
+          </div>
+          <div class="card-body">
+            <% if (recentBackups && recentBackups.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Filename</th>
+                      <th>Timestamp</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% recentBackups.forEach(backup => { %>
+                      <tr>
+                        <td><%= backup.filename %></td>
+                        <td><%= new Date(backup.timestamp).toLocaleString() %></td>
+                        <td>
+                          <form action="/dashboard/backups/restore" method="post" class="d-inline">
+                            <input type="hidden" name="filename" value="<%= backup.filename %>">
+                            <button type="submit" class="btn btn-sm btn-warning">
+                              <i class="fas fa-undo"></i> Restore
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-center my-4">No recent backups found.</p>
+            <% } %>
+            
+            <div class="text-center mt-4">
+              <a href="/dashboard/settings" class="btn btn-sm btn-primary">Manage Backups</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Last Errors -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Errors</h6>
+          </div>
+          <div class="card-body">
+            <% if (stats.lastErrors && stats.lastErrors.length > 0) { %>
+              <div class="alert-list">
+                <% stats.lastErrors.forEach(error => { %>
+                  <div class="alert alert-danger mb-2">
+                    <small class="text-muted d-block">
+                      <%= new Date(error.timestamp).toLocaleString() %>
+                    </small>
+                    <%= error.message %>
+                  </div>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="text-center my-4">No recent errors. System running smoothly.</p>
+            <% } %>
+            
+            <div class="text-center mt-4">
+              <a href="/dashboard/logs" class="btn btn-sm btn-primary">View All Logs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/dashboard-footer') %>
+      
+      <!-- Published Books -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Published Books
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.publishedBooks %></div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Unpublished Books -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Unpublished Books
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.unpublishedBooks %></div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-eye-slash fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Active Redirects -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  Active Redirects
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"><%= stats.totalRedirects %></div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-exchange-alt fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- System status and Recent activity -->
+    <div class="row">
+      <!-- System Status -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">System Status</h6>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <strong>Last Scan Time:</strong> <%= stats.lastScanTime %>
+            </div>
+            <div class="mb-3">
+              <strong>Webhooks Registered:</strong> 
+              <% if (stats.webhooksRegistered) { %>
+                <span class="badge badge-success">Yes</span>
+              <% } else { %>
+                <span class="badge badge-danger">No</span>
+              <% } %>
+            </div>
+            <div class="mb-3">
+              <strong>Cron Jobs Active:</strong> 
+              <% if (global.cronJobsActive) { %>
+                <span class="badge badge-success">Yes</span>
+              <% } else { %>
+                <span class="badge badge-danger">No</span>
+              <% } %>
+            </div>
+            <div class="mb-3">
+              <strong>Email Notifications:</strong> 
+              <% if (process.env.EMAIL_ENABLED === 'true') { %>
+                <span class="badge badge-success">Enabled</span>
+              <% } else { %>
+                <span class="badge badge-warning">Disabled</span>
+              <% } %>
+            </div>
+            <div>
+              <strong>Environment:</strong> <%= process.env.NODE_ENV || 'development' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Activity -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
+          </div>
+          <div class="card-body">
+            <% if (notifications && notifications.length > 0) { %>
+              <ul class="timeline">
+                <% notifications.forEach(notification => { %>
+                  <li class="timeline-item">
+                    <div class="timeline-marker <%= notification.type === 'error' ? 'bg-danger' : notification.type === 'warning' ? 'bg-warning' : 'bg-primary' %>"></div>
+                    <div class="timeline-content">
+                      <h3 class="timeline-title"><%= notification.subject %></h3>
+                      <p><%= notification.message %></p>
+                      <small class="text-muted">
+                        <%= new Date(notification.timestamp).toLocaleString() %>
+                      </small>
+                    </div>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <p class="text-center my-4">No recent activity found.</p>
+            <% } %>
+            
+            <div class="text-center mt-4">
+              <a href="/dashboard/logs" class="btn btn-sm btn-primary">View All Activity</a>
+            </div>
+          </div>

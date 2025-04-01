@@ -6,6 +6,12 @@ const webhookController = require('./controllers/webhookController');
 const apiController = require('./controllers/apiController');
 const dashboardController = require('./controllers/dashboardController');
 const logger = require('./utils/logger');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
+const createSessionStore = require('./utils/sessionStore');
+const { authMiddleware } = require('./middleware/auth');
+const authRoutes = require('./routes/auth');
+const flashMiddleware = require('./middleware/flash');
 
 const app = express();
 
@@ -19,6 +25,10 @@ app.use(express.json({
     req.rawBody = buf;
   }
 }));
+app.use(cookieParser(config.auth.cookieSecret));
+app.use(createSessionStore());
+app.use(flash());
+app.use(flashMiddleware);
 
 app.use(cors());
 
@@ -70,5 +80,8 @@ app.use((err, req, res, next) => {
   logger.error(`Unhandled error: ${err.message}`);
   res.status(500).json({ error: 'Internal server error' });
 });
+
+app.use('/auth', authRoutes);
+app.use('/dashboard', authMiddleware, dashboardRoutes);
 
 module.exports = app;

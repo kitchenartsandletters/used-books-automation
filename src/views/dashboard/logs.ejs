@@ -1,0 +1,92 @@
+<%- include('../layouts/dashboard-header', { title: title }) %>
+
+<div class="dashboard-content">
+  <div class="container-fluid">
+    <!-- Dashboard header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3">System Logs</h1>
+      
+      <div class="actions">
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-filter"></i> Filter
+          </button>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="/dashboard/logs?type=all">All Logs</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/dashboard/logs?type=error">Errors Only</a>
+            <a class="dropdown-item" href="/dashboard/logs?type=warning">Warnings Only</a>
+            <a class="dropdown-item" href="/dashboard/logs?type=info">Info Only</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Logs Table -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">System Notifications</h6>
+        
+        <div class="input-group" style="width: 300px;">
+          <input type="text" id="logsSearch" class="form-control" placeholder="Search logs...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button" id="searchButton">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if (notifications && notifications.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-bordered" id="logsTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th width="180">Timestamp</th>
+                  <th width="100">Type</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% notifications.forEach(notification => { %>
+                  <tr class="log-row <%= notification.type === 'error' ? 'table-danger' : notification.type === 'warning' ? 'table-warning' : '' %>">
+                    <td>
+                      <small><%= new Date(notification.timestamp).toLocaleString() %></small>
+                    </td>
+                    <td>
+                      <span class="badge badge-<%= notification.type === 'error' ? 'danger' : notification.type === 'warning' ? 'warning' : 'primary' %>">
+                        <%= notification.type %>
+                      </span>
+                    </td>
+                    <td><%= notification.subject %></td>
+                    <td><%= notification.message %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="text-center py-5">
+            <i class="fas fa-history fa-4x mb-3 text-gray-300"></i>
+            <p class="lead text-gray-500">No logs found.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Search logs table
+  $(document).ready(function() {
+    $('#logsSearch').on('keyup', function() {
+      const value = $(this).val().toLowerCase();
+      $('#logsTable tbody tr').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+</script>
+
+<%- include('../layouts/dashboard-footer') %>

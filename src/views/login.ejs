@@ -1,0 +1,57 @@
+<%- include('../layouts/header', { title: title }) %>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Used Books Automation</h2>
+      <p>Dashboard Login</p>
+    </div>
+    
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= error %>
+      </div>
+    <% } %>
+    
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success" role="alert">
+        <%= success %>
+      </div>
+    <% } %>
+    
+    <form action="/auth/login" method="post" class="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          class="form-control" 
+          placeholder="Enter username" 
+          required 
+          autofocus
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="Enter password" 
+          required
+        >
+      </div>
+      
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+    
+    <div class="login-footer">
+      <p>&copy; <%= new Date().getFullYear() %> Used Books Automation. All rights reserved.</p>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>
