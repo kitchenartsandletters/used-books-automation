@@ -11,6 +11,7 @@ const flash = require('connect-flash');
 const createSessionStore = require('./utils/sessionStore');
 const { authMiddleware } = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard'); 
 const flashMiddleware = require('./middleware/flash');
 const config = require('../config/environment');
 
