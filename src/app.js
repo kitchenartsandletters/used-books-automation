@@ -34,6 +34,9 @@ app.use(flashMiddleware);
 
 app.use(cors());
 
+app.use(express.urlencoded({ extended: true })); // For parsing form data
+app.use(express.json()); // For parsing JSON
+
 // Dashboard routes
 app.get('/dashboard', dashboardController.getDashboard);
 app.get('/api/redirects', dashboardController.getRedirects);

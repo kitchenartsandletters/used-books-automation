@@ -88,7 +88,7 @@ async function getDashboard(req, res) {
     }
     
     // Render dashboard view
-    res.render('dashboard/index', {
+    res.render('../views/dashboard/index', {
       title: 'Dashboard - Used Books Automation',
       stats: systemStats,
       notifications,

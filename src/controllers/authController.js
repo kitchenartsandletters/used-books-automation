@@ -4,6 +4,15 @@ const bcrypt = require('bcrypt');
 const config = require('../../config/environment');
 const logger = require('../utils/logger');
 
+const adminPassword = 'admin123';
+bcrypt.hash(adminPassword, 10).then(hash => {
+  console.log('Use this hash for admin user:', hash);
+});
+const staffPassword = 'staff123';
+bcrypt.hash(staffPassword, 10).then(hash => {
+  console.log('Use this hash for staff user:', hash);
+});
+
 // Hard-coded users for simplicity
 // In a production environment, this would be replaced with a database
 const users = [
@@ -11,7 +20,7 @@ const users = [
     id: 1,
     username: 'admin',
     // Default password: admin123 (would be properly hashed in production)
-    passwordHash: '$2b$10$3euPcmQFCiblsZB8sKaYAOV9UHjxNR3LOzKpYXEyNWBHvhkuLX/3e',
+    passwordHash: adminPassword,
     role: 'admin',
     name: 'Admin User'
   },
@@ -19,7 +28,7 @@ const users = [
     id: 2,
     username: 'staff',
     // Default password: staff123 (would be properly hashed in production)
-    passwordHash: '$2b$10$LHnUGsVCNUGXDUFBv3JLyeLlxiS5/xR.9Jl15qN.aK6p/r0UMY.Iy',
+    passwordHash: staffPassword,
     role: 'staff',
     name: 'Staff User'
   }
@@ -41,7 +50,7 @@ const getLoginPage = (req, res) => {
   }
   
   // Render login page
-  res.render('auth/login', {
+  res.render('login', {
     title: 'Login - Used Books Automation',
     error: req.flash ? req.flash('error') : null,
     success: req.flash ? req.flash('success') : null
@@ -52,10 +61,13 @@ const getLoginPage = (req, res) => {
  * Process login form submission
  */
 const processLogin = async (req, res) => {
+  console.log('Login attempt received:', { username: req.body.username });
+  
   const { username, password } = req.body;
   
   // Validate input
   if (!username || !password) {
+    console.log('Login failed: Missing username or password');
     if (req.flash) {
       req.flash('error', 'Username and password are required');
     }
@@ -67,23 +79,27 @@ const processLogin = async (req, res) => {
     const user = users.find(u => u.username === username);
     
     if (!user) {
-      logger.warn(`Login attempt with invalid username: ${username}`);
+      console.log(`Login failed: User not found - '${username}'`);
       if (req.flash) {
         req.flash('error', 'Invalid username or password');
       }
       return res.redirect('/auth/login');
     }
+    
+    console.log(`User found: ${username}, attempting password verification`);
     
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     
     if (!passwordMatch) {
-      logger.warn(`Failed login attempt for user: ${username}`);
+      console.log(`Login failed: Password mismatch for user '${username}'`);
       if (req.flash) {
         req.flash('error', 'Invalid username or password');
       }
       return res.redirect('/auth/login');
     }
+    
+    console.log(`Password verified for user: ${username}, creating JWT token`);
     
     // Create JWT token with user data (excluding password)
     const token = jwt.sign(
@@ -97,6 +113,8 @@ const processLogin = async (req, res) => {
       { expiresIn: config.auth.jwtExpiration || '24h' }
     );
     
+    console.log('JWT token created, setting cookie');
+    
     // Set cookie with token
     res.cookie('token', token, {
       httpOnly: true,
@@ -104,16 +122,16 @@ const processLogin = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
     
-    logger.info(`Successful login: ${username}`);
+    console.log(`Successful login: ${username}, redirecting to dashboard`);
     
     // Redirect to dashboard
-    res.redirect('/dashboard');
+    return res.redirect('/dashboard');
   } catch (error) {
-    logger.error(`Login error: ${error.message}`);
+    console.error(`Login error: ${error.message}`, error);
     if (req.flash) {
       req.flash('error', 'An error occurred during login');
     }
-    res.redirect('/auth/login');
+    return res.redirect('/auth/login');
   }
 };
 

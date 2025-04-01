@@ -4,13 +4,13 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 /**
- * GET /auth/login
+ * GET login
  * Login page
  */
 router.get('/login', authController.getLoginPage);
 
 /**
- * POST /auth/login
+ * POST login
  * Process login form
  */
 router.post('/login', authController.processLogin);

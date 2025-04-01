@@ -62,7 +62,7 @@ const authMiddleware = (req, res, next) => {
   const token = req.cookies.token;
   
   if (!token) {
-    return res.redirect('/login');
+    return res.redirect('/auth/`login');
   }
   
   try {
@@ -72,7 +72,7 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     res.clearCookie('token');
-    return res.redirect('/login');
+    return res.redirect('/auth/login');
   }
 };
 
@@ -102,14 +102,14 @@ const login = async (req, res) => {
   const user = users.find(u => u.username === username);
   if (!user) {
     req.flash('error', 'Invalid credentials');
-    return res.redirect('/login');
+    return res.redirect('/auth/login');
   }
   
   // Verify password
   const passwordMatch = await bcrypt.compare(password, user.passwordHash);
   if (!passwordMatch) {
     req.flash('error', 'Invalid credentials');
-    return res.redirect('/login');
+    return res.redirect('/auth/login');
   }
   
   // Create token
@@ -133,7 +133,7 @@ module.exports = {
   login,
   logout: (req, res) => {
     res.clearCookie('token');
-    res.redirect('/login');
+    res.redirect('/auth/login');
   }
 };
 ```

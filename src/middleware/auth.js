@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
   
   if (!token) {
     logger.info('Access attempt without token, redirecting to login');
-    return res.redirect('/auth/login');
+    return res.redirect('login');
   }
   
   try {
