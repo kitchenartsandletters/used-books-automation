@@ -36,7 +36,7 @@ app.use(cors());
 // Dashboard routes
 app.get('/dashboard', dashboardController.getDashboard);
 app.get('/api/redirects', dashboardController.getRedirects);
-app.post('/api/scan', dashboardController.runManualScan);
+app.post('/api/scan', dashboardController.runScan);
 app.post('/api/override', dashboardController.manualOverride);
 
 // Webhook routes

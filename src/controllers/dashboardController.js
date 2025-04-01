@@ -137,7 +137,6 @@ async function getRedirects(req, res) {
 
 /**
  * Run manual system scan
- */
 async function runManualScan(req, res) {
   try {
     // Update last scan time
@@ -168,7 +167,7 @@ async function runManualScan(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-
+*/
 /**
  * Render books management page
  */
@@ -487,5 +486,6 @@ module.exports = {
   runScan,
   publishBook,
   unpublishBook,
-  updateSystemStats
+  updateSystemStats,
+  manualOverride
 };
