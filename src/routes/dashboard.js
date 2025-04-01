@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
+const redirectService = require('../services/redirectService');
+const { authMiddleware } = require('../middleware/auth');
 const { isAdmin } = require('../middleware/auth');
 
 /**
@@ -55,61 +57,53 @@ router.post('/books/:id/unpublish', authMiddleware, dashboardController.unpublis
 /**
  * POST /dashboard/backups/create
  * Create a new backup
- */
-router.post('/backups/create', isAdmin, authMiddleware, dashboardController.createBackup);
+router.post('/backups/create', isAdmin, authMiddleware, dashboardController.createBackup);*/
 
 /**
  * POST /dashboard/backups/restore
  * Restore from a backup
- */
-router.post('/backups/restore', isAdmin, authMiddleware, dashboardController.restoreBackup);
+router.post('/backups/restore', isAdmin, authMiddleware, dashboardController.restoreBackup);*/
 
 /**
  * POST /dashboard/backups/delete
  * Delete a backup
- */
-router.post('/backups/delete', isAdmin, authMiddleware, dashboardController.deleteBackup);
+router.post('/backups/delete', isAdmin, authMiddleware, dashboardController.deleteBackup);*/
 
 /**
  * POST /dashboard/webhooks/register
  * Register webhooks
- */
-router.post('/webhooks/register', isAdmin, authMiddleware, dashboardController.registerWebhooks);
+router.post('/webhooks/register', isAdmin, authMiddleware, webhooks.registerWebhooks);*/
 
 /**
  * POST /dashboard/settings/test-email
  * Send a test email
- */
-router.post('/settings/test-email', isAdmin, authMiddleware, dashboardController.sendTestEmail);
+router.post('/settings/test-email', isAdmin, authMiddleware, dashboardController.sendTestEmail);*/
 
 /**
  * POST /dashboard/cron/start
  * Start scheduled tasks
- */
-router.post('/cron/start', isAdmin, authMiddleware, dashboardController.startCronJobs);
+router.post('/cron/start', isAdmin, authMiddleware, dashboardController.startCronJobs);*/
 
 /**
  * POST /dashboard/cron/stop
  * Stop scheduled tasks
- */
-router.post('/cron/stop', isAdmin, authMiddleware, dashboardController.stopCronJobs);
+router.post('/cron/stop', isAdmin, authMiddleware, dashboardController.stopCronJobs);*/
 
 /**
  * POST /dashboard/redirects/create
  * Create a new redirect
- */
-router.post('/redirects/create', authMiddleware, dashboardController.createRedirect);
+ * */
+router.post('/redirects/create', authMiddleware, redirectService.createRedirect);
 
 /**
  * POST /dashboard/redirects/update
  * Update a redirect
- */
-router.post('/redirects/update', authMiddleware, dashboardController.updateRedirect);
+router.post('/redirects/update', authMiddleware, dashboardController.updateRedirect);*/
 
 /**
  * POST /dashboard/redirects/:id/delete
  * Delete a redirect
- */
-router.post('/redirects/:id/delete', authMiddleware, dashboardController.deleteRedirect);
+
+router.post('/redirects/:id/delete', authMiddleware, dashboardController.deleteRedirect);*/
 
 module.exports = router;
