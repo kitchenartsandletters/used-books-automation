@@ -12,6 +12,7 @@ const createSessionStore = require('./utils/sessionStore');
 const { authMiddleware } = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const flashMiddleware = require('./middleware/flash');
+const config = require('../config/environment');
 
 const app = express();
 
@@ -34,7 +35,7 @@ app.use(cors());
 
 // Dashboard routes
 app.get('/dashboard', dashboardController.getDashboard);
-app.get('/api/redirects', dashboardController.getRedirectsApi);
+app.get('/api/redirects', dashboardController.getRedirects);
 app.post('/api/scan', dashboardController.runManualScan);
 app.post('/api/override', dashboardController.manualOverride);
 

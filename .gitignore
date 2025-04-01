@@ -12,3 +12,11 @@ combined.log
 error.log
 
 Used Books Automation System Staff Guide.md.DS_Store
+generate-secrets.js
+
+# macOS
+.DS_Store
+
+# For other files you want to ignore
+config/.DS_Store
+src/**/.DS_Store*

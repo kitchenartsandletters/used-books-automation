@@ -18,7 +18,7 @@ module.exports = {
   notifications: {
     email: {
       enabled: process.env.EMAIL_ENABLED === 'true',
-      provider: sendgrid,
+      provider: 'sendgrid',
       apiKey: process.env.SENDGRID_API_KEY,
       from: process.env.EMAIL_FROM,
       to: process.env.EMAIL_TO
