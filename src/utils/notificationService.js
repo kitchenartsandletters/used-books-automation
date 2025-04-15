@@ -2,6 +2,7 @@
 const sgMail = require('@sendgrid/mail');
 const config = require('../../config/environment');
 const logger = require('./logger');
+const emailService = require('./emailService');
 
 // Store notification history in memory
 const notificationHistory = [];
@@ -91,7 +92,7 @@ async function notify(type, subject, message, sendEmail = false) {
     case 'error':
       logger.error(`[NOTIFICATION] ${subject}: ${message}`);
       // Always send email for errors if email is enabled
-      await sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
+      await emailService.sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
       break;
     case 'warning':
       logger.warn(`[NOTIFICATION] ${subject}: ${message}`);
@@ -229,8 +230,11 @@ async function notifyInventoryMismatch(product, expected, actual) {
     <p>Please check the inventory and publishing status of this product.</p>
   `;
   
+  // Import the email service properly and use it
+  const emailService = require('./emailService');
+  
   // Send email for inventory mismatch if email is enabled
-  await emailService.sendEmail(`ERROR: ${subject}`, createHtmlMessage(type, subject, message));
+  await emailService.sendEmail(`ERROR: ${subject}`, htmlMessage);
   
   return notify('warning', subject, message, true);
 }

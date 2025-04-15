@@ -4,7 +4,7 @@ console.log('Loading shopifyClient.js');
 const config = require('../../config/environment');
 const logger = require('./logger');
 const crypto = require('crypto');
-const { apiCache } = require('./cacheService');
+const { apiCache } = require('./enhancedCacheService');
 
 console.log('ShopifyClient loading with config:', {
     shopUrl: config.shopify.shopUrl,
@@ -14,6 +14,14 @@ console.log('ShopifyClient loading with config:', {
     hasWebhookSecret: !!config.shopify.webhookSecret
   });
 
+  if (!config.shopify || !config.shopify.shopUrl || !config.shopify.accessToken) {
+    console.error('CRITICAL ERROR: Shopify configuration is missing or incomplete.');
+    console.error('Required config: shopUrl, accessToken, apiKey, apiSecret');
+    console.error('Current config:', config.shopify);
+    
+    // Throw an error to prevent the application from starting with invalid config
+    throw new Error('Shopify configuration is incomplete. Check your environment variables.');
+  }
 
 // Helper function to determine if a request is cacheable
 function isCacheableRequest(path) {
@@ -28,13 +36,13 @@ function isCacheableRequest(path) {
   }
 
 const shopifyClient = {
-    // Update the get method in shopifyClient.js to handle paths correctly
+// Fixed shopifyClient.js get method
     get: async function(path, params = {}, skipCache = false) {
-        try {
+      try {
         // Check if path is an object and convert it properly
         if (typeof path === 'object') {
-            console.error('Path should be a string, not an object:', path);
-            path = 'products.json'; // Default fallback
+          console.error('Path should be a string, not an object:', path);
+          path = 'products.json'; // Default fallback
         }
         
         // Check if request is cacheable
@@ -42,21 +50,21 @@ const shopifyClient = {
 
         // Generate cache key if cacheable
         const cacheKey = cacheable ? 
-        `shopify:${path}:${JSON.stringify(params || {})}` : null;
+          `shopify:${path}:${JSON.stringify(params || {})}` : null;
 
         // Try to get from cache if appropriate
         if (cacheable && !skipCache && cacheKey) {
-            const cachedResponse = apiCache.get(cacheKey);
-            if (cachedResponse) {
-                console.log(`Cache hit for: ${path}`);
-                return cachedResponse;
-            }
+          const cachedResponse = apiCache.get(cacheKey);
+          if (cachedResponse) {
+            console.log(`Cache hit for: ${path}`);
+            return cachedResponse;
+          }
         }
 
         // Ensure we have the complete shop URL
         const shopUrl = config.shopify.shopUrl;
         if (!shopUrl) {
-            throw new Error('Shop URL is not defined in config');
+          throw new Error('Shop URL is not defined in config');
         }
         
         // Create a clean URL without protocol
@@ -67,21 +75,21 @@ const shopifyClient = {
         
         // Add query parameters
         if (params && params.query) {
-            Object.entries(params.query).forEach(([key, value]) => {
+          Object.entries(params.query).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
-                url.searchParams.append(key, value);
+              url.searchParams.append(key, value);
             }
-            });
+          });
         }
         
         console.log(`Making GET request to: ${url.toString()}`);
         
         const response = await fetch(url, {
-            method: 'GET',
-            headers: {
+          method: 'GET',
+          headers: {
             'Content-Type': 'application/json',
             'X-Shopify-Access-Token': config.shopify.accessToken
-            }
+          }
         });
         
         // Log the status code
@@ -89,40 +97,40 @@ const shopifyClient = {
 
         // Handle rate limiting
         if (response.status === 429) {
-            const retryAfter = parseInt(response.headers.get('Retry-After') || '1');
-            console.log(`Rate limited by Shopify API. Waiting ${retryAfter} seconds...`);
-            
-            // Wait for the specified time
-            await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
-            
-            // Retry the request
-            return this.get(path, params, skipCache);
+          const retryAfter = parseInt(response.headers.get('Retry-After') || '1');
+          console.log(`Rate limited by Shopify API. Waiting ${retryAfter} seconds...`);
+          
+          // Wait for the specified time
+          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+          
+          // Retry the request
+          return this.get(path, params, skipCache);
         }
         
         // Check if response is ok
         if (!response.ok) {
-            const text = await response.text();
-            console.error(`Error response: ${text}`);
-            throw new Error(`API returned status ${response.status}: ${text}`);
+          const text = await response.text();
+          console.error(`Error response: ${text}`);
+          throw new Error(`API returned status ${response.status}: ${text}`);
         }
         
         const responseData = await response.json();
-        return {
-            body: responseData,
-            status: response.status,
-            headers: response.headers
+        const result = {
+          body: responseData,
+          status: response.status,
+          headers: response.headers
         };
 
         // Cache the result if appropriate
         if (cacheable && !skipCache && cacheKey) {
-            apiCache.set(cacheKey, result);
+          apiCache.set(cacheKey, result);
         }
 
-            return result;
-        } catch (error) {
+        return result;
+      } catch (error) {
         logger.error(`Error in GET request to ${path}: ${error.message}`);
         throw error;
-        }
+      }
     },
   
     // Update POST method to handle rate limiting

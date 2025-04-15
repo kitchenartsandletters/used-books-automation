@@ -16,6 +16,8 @@
   
   <!-- Favicon -->
   <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="/css/dashboard-async.css">
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -27,8 +29,13 @@
       
       <div class="sidebar-user">
         <div class="user-info">
-          <span class="user-name"><%= user.name || user.username %></span>
-          <span class="user-role"><%= user.role %></span>
+          <% if (typeof user !== 'undefined') { %>
+            <span class="user-name"><%= user.name || user.username %></span>
+            <span class="user-role"><%= user.role %></span>
+          <% } else { %>
+            <span class="user-name">Guest User</span>
+            <span class="user-role">Guest</span>
+          <% } %>
         </div>
       </div>
       

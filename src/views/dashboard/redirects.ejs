@@ -1,5 +1,7 @@
 <%- include('../layouts/dashboard-header', { title: title }) %>
 
+<script src="/js/dashboard-async.js" defer></script>
+
 <div class="dashboard-content">
   <div class="container-fluid">
     <!-- Dashboard header -->
@@ -7,6 +9,9 @@
       <h1 class="h3">Redirects Management</h1>
       
       <div class="actions">
+        <button id="refresh-btn" class="btn btn-outline-secondary me-2 refresh-button">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
         <button type="button" class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#createRedirectModal">
           <i class="fas fa-plus"></i> Create Redirect
         </button>
@@ -38,9 +43,9 @@
     <% } %>
     
     <!-- Redirects Table -->
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4" id="redirects-container">
       <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Active Redirects (<%= redirects.length %>)</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Active Redirects (<span id="redirects-count"><%= redirects.length %></span>)</h6>
         
         <div class="input-group" style="width: 300px;">
           <input type="text" id="redirectSearch" class="form-control" placeholder="Search redirects...">
@@ -52,88 +57,96 @@
         </div>
       </div>
       <div class="card-body">
-        <% if (redirects && redirects.length > 0) { %>
-          <div class="table-responsive">
-            <table class="table table-bordered dataTable" id="redirectsTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Path (From)</th>
-                  <th>Target (To)</th>
-                  <th>Type</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% redirects.forEach(redirect => { %>
+        <!-- Loading indicator for redirects -->
+        <div id="redirects-loading">
+          <%- include('../partials/loading', { id: 'redirects-loading', message: 'Loading redirects...' }) %>
+        </div>
+        
+        <!-- Content container (initially hidden) -->
+        <div id="redirects-content" class="content-container" style="display: none;">
+          <% if (redirects && redirects.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-bordered dataTable" id="redirects-table" width="100%" cellspacing="0">
+                <thead>
                   <tr>
-                    <td>
-                      <small><code><%= redirect.path %></code></small>
-                    </td>
-                    <td>
-                      <small><code><%= redirect.target %></code></small>
-                    </td>
-                    <td>
-                      <span class="badge badge-<%= redirect.redirect_type === '301' ? 'dark' : 'info' %>">
-                        <%= redirect.redirect_type %>
-                      </span>
-                    </td>
-                    <td>
-                      <!-- Test redirect -->
-                      <a 
-                        href="https://<%= process.env.SHOP_URL %><%= redirect.path %>"
-                        class="btn btn-sm btn-info"
-                        target="_blank"
-                        data-toggle="tooltip"
-                        title="Test Redirect"
-                      >
-                        <i class="fas fa-external-link-alt"></i>
-                      </a>
-                      
-                      <!-- Edit redirect -->
-                      <button 
-                        type="button" 
-                        class="btn btn-sm btn-primary"
-                        data-toggle="modal" 
-                        data-target="#editRedirectModal"
-                        data-id="<%= redirect.id %>"
-                        data-path="<%= redirect.path %>"
-                        data-target="<%= redirect.target %>"
-                        data-type="<%= redirect.redirect_type %>"
-                      >
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      
-                      <!-- Delete redirect -->
-                      <form 
-                        action="/dashboard/redirects/<%= redirect.id %>/delete" 
-                        method="post" 
-                        class="d-inline"
-                        data-confirm="Are you sure you want to delete this redirect?"
-                      >
-                        <button 
-                          type="submit" 
-                          class="btn btn-sm btn-danger"
-                          data-toggle="tooltip"
-                          title="Delete Redirect"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </form>
-                    </td>
+                    <th>Path (From)</th>
+                    <th>Target (To)</th>
+                    <th>Type</th>
+                    <th>Actions</th>
                   </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          </div>
-        <% } else { %>
-          <div class="text-center py-5">
-            <i class="fas fa-exchange-alt fa-4x mb-3 text-gray-300"></i>
-            <p class="lead text-gray-500">No redirects found.</p>
-            <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#createRedirectModal">
-              Create Your First Redirect
-            </button>
-          </div>
-        <% } %>
+                </thead>
+                <tbody>
+                  <% redirects.forEach(redirect => { %>
+                    <tr>
+                      <td>
+                        <small><code><%= redirect.path %></code></small>
+                      </td>
+                      <td>
+                        <small><code><%= redirect.target %></code></small>
+                      </td>
+                      <td>
+                        <span class="badge badge-<%= redirect.redirect_type === '301' ? 'dark' : 'info' %>">
+                          <%= redirect.redirect_type %>
+                        </span>
+                      </td>
+                      <td>
+                        <!-- Test redirect -->
+                        <a 
+                          href="https://<%= process.env.SHOP_URL %><%= redirect.path %>"
+                          class="btn btn-sm btn-info"
+                          target="_blank"
+                          data-toggle="tooltip"
+                          title="Test Redirect"
+                        >
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        
+                        <!-- Edit redirect -->
+                        <button 
+                          type="button" 
+                          class="btn btn-sm btn-primary"
+                          data-toggle="modal" 
+                          data-target="#editRedirectModal"
+                          data-id="<%= redirect.id %>"
+                          data-path="<%= redirect.path %>"
+                          data-target="<%= redirect.target %>"
+                          data-type="<%= redirect.redirect_type %>"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        
+                        <!-- Delete redirect -->
+                        <form 
+                          action="/dashboard/redirects/<%= redirect.id %>/delete" 
+                          method="post" 
+                          class="d-inline"
+                          data-confirm="Are you sure you want to delete this redirect?"
+                        >
+                          <button 
+                            type="submit" 
+                            class="btn btn-sm btn-danger"
+                            data-toggle="tooltip"
+                            title="Delete Redirect"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <div class="text-center py-5">
+              <i class="fas fa-exchange-alt fa-4x mb-3 text-gray-300"></i>
+              <p class="lead text-gray-500">No redirects found.</p>
+              <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#createRedirectModal">
+                Create Your First Redirect
+              </button>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
@@ -244,29 +257,41 @@
   </div>
 </div>
 
+<!-- Add a hidden input with the shop URL for client-side JavaScript -->
+<input type="hidden" id="shop-url" value="<%= process.env.SHOP_URL %>">
+
 <script>
-  // Fill edit modal with redirect data
-  $('#editRedirectModal').on('show.bs.modal', function (event) {
-    const button = $(event.relatedTarget);
-    const id = button.data('id');
-    const path = button.data('path').replace('/products/', '');
-    const target = button.data('target').replace('/products/', '');
-    const type = button.data('type');
-    
-    const modal = $(this);
-    modal.find('#editRedirectId').val(id);
-    modal.find('#editPath').val(path);
-    modal.find('#editTarget').val(target);
-    modal.find('#editRedirectType').val(type);
-  });
-  
-  // Search redirects table
-  $(document).ready(function() {
-    $('#redirectSearch').on('keyup', function() {
-      const value = $(this).val().toLowerCase();
-      $('#redirectsTable tbody tr').filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+  // Add this search functionality for the redirects table
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('redirectSearch');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const value = this.value.toLowerCase();
+        const table = document.getElementById('redirects-table');
+        if (table) {
+          const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+          
+          for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            rows[i].style.display = text.includes(value) ? '' : 'none';
+          }
+        }
       });
+    }
+    
+    // Set up edit modal data
+    $('#editRedirectModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget);
+      const id = button.data('id');
+      const path = button.data('path').replace('/products/', '');
+      const target = button.data('target').replace('/products/', '');
+      const type = button.data('type');
+      
+      const modal = $(this);
+      modal.find('#editRedirectId').val(id);
+      modal.find('#editPath').val(path);
+      modal.find('#editTarget').val(target);
+      modal.find('#editRedirectType').val(type);
     });
   });
 </script>

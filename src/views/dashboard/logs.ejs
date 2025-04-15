@@ -1,5 +1,7 @@
 <%- include('../layouts/dashboard-header', { title: title }) %>
 
+<script src="/js/dashboard-async.js" defer></script>
+
 <div class="dashboard-content">
   <div class="container-fluid">
     <!-- Dashboard header -->
@@ -7,6 +9,9 @@
       <h1 class="h3">System Logs</h1>
       
       <div class="actions">
+        <button id="refresh-btn" class="btn btn-outline-secondary me-2 refresh-button">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
         <div class="btn-group">
           <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-filter"></i> Filter
@@ -22,8 +27,27 @@
       </div>
     </div>
     
+    <!-- Flash messages -->
+    <% if (locals.messages && messages.success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= messages.success %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
+    <% if (locals.messages && messages.error) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= messages.error %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% } %>
+    
     <!-- Logs Table -->
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4" id="logs-container">
       <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">System Notifications</h6>
         
@@ -37,55 +61,75 @@
         </div>
       </div>
       <div class="card-body">
-        <% if (notifications && notifications.length > 0) { %>
-          <div class="table-responsive">
-            <table class="table table-bordered" id="logsTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th width="180">Timestamp</th>
-                  <th width="100">Type</th>
-                  <th>Subject</th>
-                  <th>Message</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% notifications.forEach(notification => { %>
-                  <tr class="log-row <%= notification.type === 'error' ? 'table-danger' : notification.type === 'warning' ? 'table-warning' : '' %>">
-                    <td>
-                      <small><%= new Date(notification.timestamp).toLocaleString() %></small>
-                    </td>
-                    <td>
-                      <span class="badge badge-<%= notification.type === 'error' ? 'danger' : notification.type === 'warning' ? 'warning' : 'primary' %>">
-                        <%= notification.type %>
-                      </span>
-                    </td>
-                    <td><%= notification.subject %></td>
-                    <td><%= notification.message %></td>
+        <!-- Loading indicator for logs -->
+        <div id="logs-loading">
+          <%- include('../partials/loading', { id: 'logs-loading', message: 'Loading logs...' }) %>
+        </div>
+        
+        <!-- Content container (initially hidden) -->
+        <div id="logs-content" class="content-container" style="display: none;">
+          <% if (notifications && notifications.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="logs-table" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th width="180">Timestamp</th>
+                    <th width="100">Type</th>
+                    <th>Subject</th>
+                    <th>Message</th>
                   </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          </div>
-        <% } else { %>
-          <div class="text-center py-5">
-            <i class="fas fa-history fa-4x mb-3 text-gray-300"></i>
-            <p class="lead text-gray-500">No logs found.</p>
-          </div>
-        <% } %>
+                </thead>
+                <tbody>
+                  <% notifications.forEach(notification => { %>
+                    <tr class="log-row <%= notification.type === 'error' ? 'table-danger' : notification.type === 'warning' ? 'table-warning' : '' %>">
+                      <td>
+                        <small><%= new Date(notification.timestamp).toLocaleString() %></small>
+                      </td>
+                      <td>
+                        <span class="badge badge-<%= notification.type === 'error' ? 'danger' : notification.type === 'warning' ? 'warning' : 'primary' %>">
+                          <%= notification.type %>
+                        </span>
+                      </td>
+                      <td><%= notification.subject %></td>
+                      <td><%= notification.message %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <div class="text-center py-5">
+              <i class="fas fa-history fa-4x mb-3 text-gray-300"></i>
+              <p class="lead text-gray-500">No logs found.</p>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Add a hidden input with the shop URL for client-side JavaScript -->
+<input type="hidden" id="shop-url" value="<%= process.env.SHOP_URL %>">
+
 <script>
-  // Search logs table
-  $(document).ready(function() {
-    $('#logsSearch').on('keyup', function() {
-      const value = $(this).val().toLowerCase();
-      $('#logsTable tbody tr').filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+  // Add this search functionality for the logs table
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('logsSearch');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', function() {
+        const value = this.value.toLowerCase();
+        const table = document.getElementById('logs-table');
+        if (table) {
+          const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+          
+          for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            rows[i].style.display = text.includes(value) ? '' : 'none';
+          }
+        }
       });
-    });
+    }
   });
 </script>
 

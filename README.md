@@ -29,6 +29,13 @@ This application automates the management of used book listings on Shopify, hand
 - Railway account (for deployment)
 - Node.js v14+ and npm
 
+## Issue Writing
+
+- We use Linear for project development
+- When creating issues use issue number prefix 'KIT-' followed by numerical code in sequential order (as of April 8, 2025 we are at KIT-60)
+- Always reference issue numbers in Claude and force Claude to attribute a new issue number when creating issues
+- Always reconcile ISSUES.md to monitor current active issues at EOD
+
 ## Environment Variables
 
 ```

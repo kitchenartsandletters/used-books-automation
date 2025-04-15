@@ -16,7 +16,7 @@ const flashMiddleware = (req, res, next) => {
   // Also make current path available for active menu highlighting
   res.locals.currentPath = req.path;
   
-  // Add current user to views
+  // Add current user to views if authenticated
   res.locals.user = req.user;
   
   next();

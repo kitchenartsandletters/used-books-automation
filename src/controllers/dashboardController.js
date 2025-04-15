@@ -19,6 +19,105 @@ let systemStats = {
 };
 
 /**
+ * Get books with pagination for async loading
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {string} filter - Filter type (all, published, unpublished)
+ * @param {string} search - Search term
+ */
+async function getBooksPaginated(page, limit, filter = 'all', search = '') {
+  try {
+    // Default page and limit if invalid
+    page = page > 0 ? page : 1;
+    limit = limit > 0 && limit <= 100 ? limit : 20;
+    
+    // This prevents loading the entire catalog at once - get the list but with a hard limit
+    // For a production app, this would use database pagination
+    const usedBooks = await cronService.getAllUsedBooks(250); // Hard limit to prevent excessive loading
+    
+    // Apply filters
+    let filteredBooks = usedBooks;
+    
+    // Apply search filter if provided
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredBooks = filteredBooks.filter(book => 
+        book.title.toLowerCase().includes(searchLower) || 
+        book.handle.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Apply published/unpublished filter
+    if (filter === 'published') {
+      filteredBooks = filteredBooks.filter(book => book.published_at !== null);
+    } else if (filter === 'unpublished') {
+      filteredBooks = filteredBooks.filter(book => book.published_at === null);
+    }
+    
+    // Calculate pagination
+    const totalBooks = filteredBooks.length;
+    const totalPages = Math.ceil(totalBooks / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    
+    // Get the subset of books for this page
+    const paginatedBooks = filteredBooks.slice(startIndex, Math.min(endIndex, filteredBooks.length));
+    
+    // Create pagination info
+    const pagination = {
+      page,
+      limit,
+      totalBooks,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1
+    };
+    
+    return {
+      books: paginatedBooks,
+      pagination
+    };
+  } catch (error) {
+    logger.error(`Error getting paginated books: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Get all redirects for async loading
+ */
+async function getAllRedirects() {
+  try {
+    // Get active redirects (reuse existing function)
+    return await getActiveRedirects();
+  } catch (error) {
+    logger.error(`Error getting all redirects: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Get filtered logs for async loading
+ * @param {string} type - Log type filter (all, error, warning, info)
+ */
+async function getFilteredLogs(type = 'all') {
+  try {
+    // Get all notifications
+    const allNotifications = notificationService.getHistory(50);
+    
+    // Apply filter if not 'all'
+    if (type !== 'all') {
+      return allNotifications.filter(notification => notification.type === type);
+    }
+    
+    return allNotifications;
+  } catch (error) {
+    logger.error(`Error getting filtered logs: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
  * Update system stats for the dashboard
  */
 async function updateSystemStats() {
@@ -72,29 +171,29 @@ async function getActiveRedirects() {
  */
 async function getDashboard(req, res) {
   try {
-    // Get redirects and update stats
-    await updateSystemStats();
-    
-    // Get notification history
-    const notifications = notificationService.getHistory(5);
-    
-    // Get recent backups (if available)
-    let recentBackups = [];
-    try {
-      recentBackups = await backupService.listBackups();
-      recentBackups = recentBackups.slice(0, 3); // Get only 3 most recent
-    } catch (error) {
-      logger.error(`Error getting backups: ${error.message}`);
-    }
-    
-    // Render dashboard view
+    // Render the dashboard immediately with minimal data
+    // Don't wait for expensive operations
     res.render('../views/dashboard/index', {
       title: 'Dashboard - Used Books Automation',
-      stats: systemStats,
-      notifications,
-      recentBackups,
-      user: req.user
+      stats: {
+        lastScanTime: global.lastScanTime || 'Not yet run',
+        webhooksRegistered: false,
+        totalRedirects: 0,
+        totalProducts: 0,
+        publishedBooks: 0,
+        unpublishedBooks: 0,
+        lastErrors: []
+      },
+      notifications: [],
+      recentBackups: [],
+      user: req.user || { name: 'User', username: 'user', role: 'guest' }
     });
+    
+    // Then start updating stats in the background - client will fetch via API
+    updateSystemStats().catch(error => {
+      logger.error(`Background stats update error: ${error.message}`);
+    });
+    
   } catch (error) {
     logger.error(`Error rendering dashboard: ${error.message}`);
     res.status(500).render('error', {
@@ -178,9 +277,13 @@ async function getBooks(req, res) {
     const limit = parseInt(req.query.limit) || 20;
     const searchTerm = req.query.search || '';
     const filter = req.query.filter || 'all'; // all, published, unpublished
+    const notifications = notificationService.getHistory(5);
     
     // Get used books
-    const usedBooks = await cronService.getAllUsedBooks();
+    const usedBooks = await cronService.getAllUsedBooks(100);
+
+    // Log books info for debugging
+    logger.info(`Books found: ${usedBooks.length}`);
     
     // Apply filters
     let filteredBooks = usedBooks;
@@ -200,6 +303,9 @@ async function getBooks(req, res) {
     } else if (filter === 'unpublished') {
       filteredBooks = filteredBooks.filter(book => book.published_at === null);
     }
+
+    // Log filtered books count
+    logger.info(`Filtered books: ${filteredBooks.length}`);    
     
     // Calculate pagination
     const totalBooks = filteredBooks.length;
@@ -207,6 +313,9 @@ async function getBooks(req, res) {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     const paginatedBooks = filteredBooks.slice(startIndex, endIndex);
+
+    // Log pagination info
+    logger.info(`Page ${page}, showing ${paginatedBooks.length} books (${startIndex}-${endIndex} of ${totalBooks})`);
     
     // Render books view
     res.render('dashboard/books', {
@@ -222,6 +331,7 @@ async function getBooks(req, res) {
       },
       filter,
       searchTerm,
+      notifications,
       user: req.user
     });
   } catch (error) {
@@ -487,5 +597,8 @@ module.exports = {
   publishBook,
   unpublishBook,
   updateSystemStats,
-  manualOverride
+  manualOverride,
+  getBooksPaginated,
+  getAllRedirects,
+  getFilteredLogs
 };

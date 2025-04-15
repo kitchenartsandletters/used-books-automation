@@ -7,103 +7,126 @@ const logger = require('../utils/logger');
 const cron = require('node-cron');
 
 /**
- * Get all used book products
+ * Get used book products with optional limit
+ * @param {number} maxItems - Maximum number of items to return
+ * @returns {Promise<Array>} Array of used book products
  */
-// Updated getAllUsedBooks function
-async function getAllUsedBooks() {
-    try {
-      logger.info('Starting used books scan');
+async function getAllUsedBooks(maxItems = null, quickLoad = false) {
+  try {
+    if (quickLoad) {
+      // Just get the first page with a small limit
+      const response = await shopifyClient.get('products.json', {
+        query: { limit: 50 }
+      });
       
-      let products = [];
-      let hasMoreProducts = true;
-      let nextPageToken = null;
-      const limit = 250; // Max allowed by Shopify - get the most products per request
-      let requestCount = 0;
-      const MAX_REQUESTS = 100; // Safety limit
+      if (!response.body || !response.body.products) {
+        return [];
+      }
       
-      while (hasMoreProducts && requestCount < MAX_REQUESTS) {
-        try {
-          // Only add a small delay between requests, not 500ms
-          if (nextPageToken) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-          }
-          
-          // Build the query parameters
-          const queryParams = { limit };
-          if (nextPageToken) {
-            queryParams.page_info = nextPageToken;
-          }
-          
-          logger.info(`Fetching products batch ${requestCount + 1}${nextPageToken ? ' (continued)' : ' (first batch)'}`);
-          requestCount++;
-          
-          const response = await shopifyClient.get('products.json', {
-            query: queryParams
-          });
-          
-          if (!response.body || !response.body.products || response.body.products.length === 0) {
-            logger.info('No more products found');
-            break;
-          }
-          
-          // Get the pagination information from the Link header
-          const linkHeader = response.headers ? response.headers.get('Link') : null;
-          nextPageToken = null;
-          
-          if (linkHeader) {
-            // Parse the Link header to extract the next page token
-            const nextLink = linkHeader.split(',').find(link => link.includes('rel="next"'));
-            if (nextLink) {
-              const match = nextLink.match(/page_info=([^&>]*)/);
-              if (match && match[1]) {
-                nextPageToken = match[1];
-              }
+      // Filter for used books based on the handle pattern
+      const usedBooks = response.body.products.filter(product => {
+        return product.handle && product.handle.includes('-used-');
+      });
+      
+      logger.info(`Quick loaded ${usedBooks.length} used books for dashboard`);
+      return usedBooks;
+    }
+
+    logger.info(`Starting used books scan${maxItems ? ` (limited to ${maxItems} items)` : ''}`);
+    
+    let products = [];
+    let hasMoreProducts = true;
+    let nextPageToken = null;
+    const limit = 250; // Max allowed by Shopify - get the most products per request
+    let requestCount = 0;
+    const MAX_REQUESTS = maxItems ? Math.ceil(maxItems / limit) : 100; // Safety limit
+    
+    while (hasMoreProducts && requestCount < MAX_REQUESTS) {
+      try {
+        // Only add a small delay between requests
+        if (nextPageToken) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Build the query parameters
+        const queryParams = { limit };
+        if (nextPageToken) {
+          queryParams.page_info = nextPageToken;
+        }
+        
+        logger.info(`Fetching products batch ${requestCount + 1}${nextPageToken ? ' (continued)' : ' (first batch)'}`);
+        requestCount++;
+        
+        const response = await shopifyClient.get('products.json', {
+          query: queryParams
+        });
+        
+        if (!response.body || !response.body.products || response.body.products.length === 0) {
+          logger.info('No more products found');
+          break;
+        }
+        
+        // Get the pagination information from the Link header
+        const linkHeader = response.headers ? response.headers.get('Link') : null;
+        nextPageToken = null;
+        
+        if (linkHeader) {
+          // Parse the Link header to extract the next page token
+          const nextLink = linkHeader.split(',').find(link => link.includes('rel="next"'));
+          if (nextLink) {
+            const match = nextLink.match(/page_info=([^&>]*)/);
+            if (match && match[1]) {
+              nextPageToken = match[1];
             }
           }
-          
-          // Filter for used books based on the handle pattern - do this efficiently
-          const usedBooks = response.body.products.filter(product => {
-            return product.handle && product.handle.includes('-used-');
-          });
-          
-          // Only log the count, not each individual book (reduces log overhead)
-          if (usedBooks.length > 0) {
-            logger.info(`Found ${usedBooks.length} used books in batch ${requestCount}`);
-            
-            // If you need detailed logging, uncomment this
-            // usedBooks.forEach(book => {
-            //   logger.info(`Used book found: ${book.handle}`);
-            // });
-          }
-          
-          products = [...products, ...usedBooks];
-          
-          // If we don't have a next page token, we've reached the end
-          hasMoreProducts = !!nextPageToken;
-          
-        } catch (error) {
-          if (error.message && error.message.includes('429')) {
-            logger.warn('Rate limited by Shopify API, pausing before retry');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // Don't increment requestCount so we retry this request
-            requestCount--;
-          } else {
-            throw error;
-          }
+        }
+        
+        // Filter for used books based on the handle pattern - do this efficiently
+        const usedBooks = response.body.products.filter(product => {
+          return product.handle && product.handle.includes('-used-');
+        });
+        
+        // Only log the count, not each individual book (reduces log overhead)
+        if (usedBooks.length > 0) {
+          logger.info(`Found ${usedBooks.length} used books in batch ${requestCount}`);
+        }
+        
+        products = [...products, ...usedBooks];
+        
+        // Check if we've reached the maxItems limit
+        if (maxItems && products.length >= maxItems) {
+          products = products.slice(0, maxItems);
+          hasMoreProducts = false;
+          logger.info(`Reached specified item limit (${maxItems})`);
+          break;
+        }
+        
+        // If we don't have a next page token, we've reached the end
+        hasMoreProducts = !!nextPageToken;
+        
+      } catch (error) {
+        if (error.message && error.message.includes('429')) {
+          logger.warn('Rate limited by Shopify API, pausing before retry');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Don't increment requestCount so we retry this request
+          requestCount--;
+        } else {
+          throw error;
         }
       }
-      
-      if (requestCount >= MAX_REQUESTS && hasMoreProducts) {
-        logger.warn(`Reached maximum request threshold (${MAX_REQUESTS}). Some products may not have been scanned.`);
-      }
-      
-      logger.info(`Completed catalog scan. Found ${products.length} used books in total after ${requestCount} requests`);
-      return products;
-    } catch (error) {
-      logger.error(`Error fetching used books: ${error.message}`);
-      throw error;
     }
+    
+    if (requestCount >= MAX_REQUESTS && hasMoreProducts) {
+      logger.warn(`Reached maximum request threshold (${MAX_REQUESTS}). Some products may not have been scanned.`);
+    }
+    
+    logger.info(`Completed catalog scan. Found ${products.length} used books in total after ${requestCount} requests`);
+    return products;
+  } catch (error) {
+    logger.error(`Error fetching used books: ${error.message}`);
+    throw error;
   }
+}
   
 /**
  * Process all used books

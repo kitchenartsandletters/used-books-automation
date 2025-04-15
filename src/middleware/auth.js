@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
   
   if (!token) {
     logger.info('Access attempt without token, redirecting to login');
-    return res.redirect('login');
+    return res.redirect('/auth/login'); // Fixed path to include /auth
   }
   
   try {
@@ -22,6 +22,9 @@ const authMiddleware = (req, res, next) => {
     
     // Add user data to request
     req.user = decoded;
+
+    // Also add user to locals so it's available in all views
+    res.locals.user = decoded;
     
     // Continue to next middleware
     next();
