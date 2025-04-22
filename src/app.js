@@ -68,7 +68,7 @@ app.use('/dashboard', authMiddleware, dashboardRoutes);
 
 // API routes
 app.post('/api/check-product', apiController.triggerProductCheck);
-app.post('/api/scan-all', apiController.scanAllUsedBooks);
+app.post('/api/scan-all', apiController.scanAllHurtBooks);
 app.get('/api/test-client', apiController.testShopifyClient);
 
 // Webhook routes
@@ -106,7 +106,7 @@ app.get('/api/test-email', async (req, res) => {
     const emailService = require('./utils/emailService');
     const result = await emailService.sendEmail(
       'Test Email', 
-      '<h1>Test Email</h1><p>This is a test email from your Used Books Automation app.</p>'
+      '<h1>Test Email</h1><p>This is a test email from your hurt Books Automation app.</p>'
     );
     
     if (result) {

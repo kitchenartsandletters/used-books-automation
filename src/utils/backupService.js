@@ -22,9 +22,9 @@ async function ensureBackupDir() {
 }
 
 /**
- * Get all redirects related to used books
+ * Get all redirects related to hurt books
  */
-async function getAllUsedBookRedirects() {
+async function getAllHurtBookRedirects() {
   try {
     // Get all redirects from Shopify (with limit)
     const response = await shopifyClient.get('redirects.json', {
@@ -35,16 +35,16 @@ async function getAllUsedBookRedirects() {
       return [];
     }
     
-    // Filter to only include redirects for used books
-    const usedBookRedirects = response.body.redirects.filter(redirect => 
+    // Filter to only include redirects for hurt books
+    const HurtBookRedirects = response.body.redirects.filter(redirect => 
       redirect.path && 
       redirect.path.includes('/products/') && 
-      redirect.path.includes('-used-')
+      redirect.path.includes('-hurt-')
     );
     
-    return usedBookRedirects;
+    return HurtBookRedirects;
   } catch (error) {
-    logger.error(`Error getting used book redirects: ${error.message}`);
+    logger.error(`Error getting hurt book redirects: ${error.message}`);
     return [];
   }
 }
@@ -59,8 +59,8 @@ async function backupRedirects() {
       throw new Error('Could not create backup directory');
     }
     
-    // Get all used book redirects
-    const redirects = await getAllUsedBookRedirects();
+    // Get all hurt book redirects
+    const redirects = await getAllHurtBookRedirects();
     
     if (redirects.length === 0) {
       logger.info('No redirects to backup');
@@ -199,5 +199,5 @@ module.exports = {
   backupRedirects,
   listBackups,
   restoreFromBackup,
-  getAllUsedBookRedirects
+  getAllHurtBookRedirects
 };

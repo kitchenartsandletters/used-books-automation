@@ -17,7 +17,7 @@ module.exports = {
       enabled: process.env.EMAIL_ENABLED === 'true',
       provider: 'sendgrid',
       apiKey: process.env.SENDGRID_API_KEY,
-      from: process.env.EMAIL_FROM || 'used-books-automation@example.com',
+      from: process.env.EMAIL_FROM || 'hurt-books-automation@example.com',
       to: process.env.EMAIL_TO || 'admin@example.com',
     }
   }

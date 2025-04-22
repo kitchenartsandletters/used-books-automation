@@ -1,13 +1,13 @@
-# Used Books Automation
+# hurt Books Automation
 
-This application automates the management of used book listings on Shopify, handling inventory changes, product visibility, SEO management, and redirects.
+This application automates the management of hurt book listings on Shopify, handling inventory changes, product visibility, SEO management, and redirects.
 
 ## Features
 
-- **Inventory Management:** Automatically monitors inventory levels for used books
-- **Dynamic Publishing:** Publishes and unpublishes used books based on stock status
-- **Redirect Management:** Creates and removes 302 redirects for out-of-stock used books to their new book counterparts
-- **SEO Optimization:** Sets canonical URLs for used books to point to their new book versions
+- **Inventory Management:** Automatically monitors inventory levels for hurt books
+- **Dynamic Publishing:** Publishes and unpublishes hurt books based on stock status
+- **Redirect Management:** Creates and removes 302 redirects for out-of-stock hurt books to their new book counterparts
+- **SEO Optimization:** Sets canonical URLs for hurt books to point to their new book versions
 - **Webhook Integration:** Processes real-time inventory updates from Shopify
 - **Scheduled Scanning:** Runs full catalog scans every 30 minutes as a backup
 - **Email Notifications:** Sends alerts for critical events via SendGrid
@@ -61,8 +61,8 @@ NODE_ENV=production
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/used-books-automation.git
-   cd used-books-automation
+   git clone https://github.com/your-username/hurt-books-automation.git
+   cd hurt-books-automation
    ```
 
 2. Install dependencies:
@@ -80,7 +80,7 @@ NODE_ENV=production
 ## API Endpoints
 
 - `POST /api/check-product`: Manually check a specific product
-- `POST /api/scan-all`: Scan all used book products
+- `POST /api/scan-all`: Scan all hurt book products
 - `GET /health`: System health check endpoint
 - `GET /api/redirects`: Get all active redirects
 - `POST /webhooks/inventory-levels`: Webhook for inventory updates
@@ -91,14 +91,14 @@ This application is configured for deployment on Railway. See the deployment pla
 
 ## Scheduled Tasks
 
-- **Inventory Check:** Runs every 30 minutes to check all used books
+- **Inventory Check:** Runs every 30 minutes to check all hurt books
 - **Backup Creation:** Runs daily at 1:00 AM to back up all redirects
 
 ## Naming Convention
 
-Used books should follow this naming pattern:
+hurt books should follow this naming pattern:
 - New book: `book-title`
-- Used book: `book-title-used-{condition}`
+- hurt book: `book-title-hurt-{condition}`
 
 Supported conditions:
 - `like-new`

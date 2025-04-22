@@ -35,22 +35,22 @@ async function findRedirectByPath(path) {
   }
   
   /**
-   * Create a 302 redirect for a used book
+   * Create a 302 redirect for a hurt book
    */
-  async function createRedirect(usedBookPath, targetPath) {
+  async function createRedirect(HurtBookPath, targetPath) {
     try {
       const response = await shopifyClient.post('redirects.json', {
         redirect: {
-          path: `/products/${usedBookPath}`,
+          path: `/products/${HurtBookPath}`,
           target: `/products/${targetPath}`,
           redirect_type: '302'
         }
       });
       
-      logger.info(`Created redirect from ${usedBookPath} to ${targetPath}`);
+      logger.info(`Created redirect from ${HurtBookPath} to ${targetPath}`);
       return response.body.redirect;
     } catch (error) {
-      logger.error(`Error creating redirect from ${usedBookPath} to ${targetPath}: ${error.message}`);
+      logger.error(`Error creating redirect from ${HurtBookPath} to ${targetPath}: ${error.message}`);
       // Return null instead of throwing an error to make this operation non-fatal
       return null;
     }

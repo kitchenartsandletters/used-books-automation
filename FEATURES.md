@@ -1,4 +1,4 @@
-# Used Books Automation - Future Features
+# hurt Books Automation - Future Features
 
 ## Phase 1: Core Enhancements (Current Backlog)
 
@@ -10,7 +10,7 @@
 2. **Enhanced Reporting (KIT-48)**
    - Track redirect usage statistics
    - Measure conversion impact of redirects
-   - Generate insights on used book sales patterns
+   - Generate insights on hurt book sales patterns
    
 3. **Admin Dashboard (KIT-45)**
    - Create a simple web interface to view system status
@@ -24,7 +24,7 @@
 ## Phase 2: Enhanced Dashboard Features
 
 1. **Real-time Inventory Monitoring**
-   - Live dashboard showing current inventory status of all used books
+   - Live dashboard showing current inventory status of all hurt books
    - Visual indicators for stock levels (in stock, low stock, out of stock)
    - Graphical representation of inventory changes over time
 
@@ -36,7 +36,7 @@
 
 3. **SEO Optimization Tools**
    - Canonical URL management dashboard
-   - Meta description and title optimization for used book listings
+   - Meta description and title optimization for hurt book listings
    - Bulk SEO edits for multiple products
    - SEO performance analytics
 
@@ -49,7 +49,7 @@
 ## Phase 3: Advanced Automation Features
 
 1. **Smart Inventory Prediction**
-   - ML-based prediction of when used books will go out of stock
+   - ML-based prediction of when hurt books will go out of stock
    - Automated alerts for low stock items before they're depleted
    - Seasonal inventory trend analysis
 
@@ -59,14 +59,14 @@
    - Smart redirect suggestions based on customer behavior
 
 3. **Multi-store Support**
-   - Manage used books across multiple Shopify stores
+   - Manage hurt books across multiple Shopify stores
    - Cross-store inventory visibility
    - Unified dashboard for all stores
 
 4. **Dynamic Pricing Strategy**
    - Automatic price adjustments based on inventory and demand
    - Competitive pricing analysis
-   - Discount automation for slow-moving used books
+   - Discount automation for slow-moving hurt books
 
 ## Phase 4: Integration and Expansion
 
@@ -77,14 +77,14 @@
    - Integration with email marketing platforms
 
 2. **Advanced Analytics**
-   - Comprehensive sales dashboard for used books
+   - Comprehensive sales dashboard for hurt books
    - Book condition vs. sales performance analysis
    - Customer preference tracking
    - Inventory turnover optimization
 
 3. **Marketing Automation**
    - Automatic email notifications when out-of-stock books return to inventory
-   - Social media integration for promoting newly available used books
+   - Social media integration for promoting newly available hurt books
    - Automated "similar book" recommendations
 
 4. **Inventory Acquisition Tools**
@@ -96,7 +96,7 @@
 ## Phase 5: Enhanced Customer Experience
 
 1. **Customer Waitlist System**
-   - Allow customers to join waitlists for out-of-stock used books
+   - Allow customers to join waitlists for out-of-stock hurt books
    - Automated notifications when books become available
    - Waitlist analytics and insights
 
@@ -115,4 +115,4 @@
    - International shipping and inventory management
    - Language localization for the dashboard
 
-These aspirational features represent potential future development paths for the Used Books Automation system, building upon the core functionality to create a comprehensive solution for bookstores managing used book inventory on Shopify.
+These aspirational features represent potential future development paths for the hurt Books Automation system, building upon the core functionality to create a comprehensive solution for bookstores managing hurt book inventory on Shopify.

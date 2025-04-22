@@ -63,7 +63,7 @@ async function sendEmail(subject, message, recipient = null) {
     const msg = {
       to: recipient || config.notifications.email.to,
       from: config.notifications.email.from,
-      subject: `[Used Books Automation] ${subject}`,
+      subject: `[hurt Books Automation] ${subject}`,
       html: message,
     };
     
@@ -128,7 +128,7 @@ function createHtmlMessage(type, subject, message) {
         <p style="margin-bottom: 0;">${message}</p>
       </div>
       <div style="color: #666; font-size: 12px;">
-        <p>Sent from Used Books Automation at ${new Date().toISOString()}</p>
+        <p>Sent from hurt Books Automation at ${new Date().toISOString()}</p>
       </div>
     </div>
   `;
@@ -178,7 +178,7 @@ async function notifySystemStatus(stats) {
   const message = `Active Redirects: ${stats.totalRedirects}, Published: ${stats.publishedBooks}, Unpublished: ${stats.unpublishedBooks}`;
   
   const htmlMessage = `
-    <h2>Used Books Automation - Status Report</h2>
+    <h2>hurt Books Automation - Status Report</h2>
     <p><strong>Time:</strong> ${new Date().toISOString()}</p>
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
       <tr style="background-color: #f2f2f2;">
@@ -202,7 +202,7 @@ async function notifySystemStatus(stats) {
         <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">${stats.lastScanTime}</td>
       </tr>
     </table>
-    <p>This is an automated status report from your Used Books Automation system.</p>
+    <p>This is an automated status report from your hurt Books Automation system.</p>
   `;
   
   // Send email for status report if email is enabled

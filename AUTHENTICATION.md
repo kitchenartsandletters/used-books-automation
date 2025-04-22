@@ -1,6 +1,6 @@
 # Authentication System Implementation
 
-This document describes the authentication system implementation for the Used Books Automation dashboard.
+This document describes the authentication system implementation for the hurt Books Automation dashboard.
 
 ## Overview
 
@@ -32,7 +32,7 @@ The system comes with two predefined users:
 
 ## Middleware
 
-Two main middleware functions are used:
+Two main middleware functions are hurt:
 
 1. **authMiddleware**: Checks for valid JWT in cookies and adds user data to request
 2. **isAdmin**: Checks if the authenticated user has admin role for protected routes

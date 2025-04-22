@@ -1,6 +1,6 @@
 # Technical Architecture and Code Structure
 
-This document provides detailed technical guidance for implementing the admin dashboard and cloud automation for the Used Books Automation system.
+This document provides detailed technical guidance for implementing the admin dashboard and cloud automation for the hurt Books Automation system.
 
 ## Admin Dashboard Architecture
 
@@ -18,7 +18,7 @@ src/
 │   │   └── alerts.ejs      # Flash message/alert component
 │   ├── dashboard/          # Dashboard view templates
 │   │   ├── index.ejs       # Dashboard home page
-│   │   ├── books.ejs       # Used books management page
+│   │   ├── books.ejs       # hurt books management page
 │   │   ├── redirects.ejs   # Redirects management page
 │   │   ├── logs.ejs        # System logs page
 │   │   └── settings.ejs    # Settings page
@@ -168,7 +168,7 @@ async function getDashboardHome(req, res) {
     const activityData = await getActivityData();
     
     res.render('dashboard/index', {
-      title: 'Dashboard - Used Books Automation',
+      title: 'Dashboard - hurt Books Automation',
       stats,
       notifications,
       backups,
@@ -179,7 +179,7 @@ async function getDashboardHome(req, res) {
     logger.error(`Error rendering dashboard: ${error.message}`);
     req.flash('error', 'Failed to load dashboard data');
     res.render('dashboard/index', {
-      title: 'Dashboard - Used Books Automation',
+      title: 'Dashboard - hurt Books Automation',
       stats: {},
       notifications: [],
       backups: [],
@@ -193,23 +193,23 @@ async function getDashboardHome(req, res) {
 async function getSystemStats() {
   try {
     // Get all active redirects
-    const redirects = await redirectService.getAllUsedBookRedirects();
+    const redirects = await redirectService.getAllHurtBookRedirects();
     
-    // Get used book products
-    const usedBooks = await cronService.getAllUsedBooks();
+    // Get hurt book products
+    const HurtBooks = await cronService.getAllHurtBooks();
     
     // Calculate stats
-    const publishedBooks = usedBooks.filter(p => p.published_at !== null);
-    const outOfStockBooks = usedBooks.filter(p => {
+    const publishedBooks = HurtBooks.filter(p => p.published_at !== null);
+    const outOfStockBooks = HurtBooks.filter(p => {
       // A book might be out of stock if all variants have zero inventory
       return p.variants.every(v => v.inventory_quantity === 0);
     });
     
     // Return stats object
     return {
-      totalBooks: usedBooks.length,
+      totalBooks: HurtBooks.length,
       publishedBooks: publishedBooks.length,
-      unpublishedBooks: usedBooks.length - publishedBooks.length,
+      unpublishedBooks: HurtBooks.length - publishedBooks.length,
       outOfStockBooks: outOfStockBooks.length,
       totalRedirects: redirects.length,
       lastScanTime: global.lastScanTime || 'Never',
@@ -243,17 +243,17 @@ module.exports = {
 };
 ```
 
-### Used Books Management Page
+### hurt Books Management Page
 
 ```javascript
 // src/controllers/booksController.js
 const productService = require('../services/productService');
 const inventoryService = require('../services/inventoryService');
-const usedBookManager = require('../services/usedBookManager');
+const hurtBookManager = require('../services/hurtBookManager');
 const logger = require('../utils/logger');
 
-// Get all used books with pagination
-async function getUsedBooks(req, res) {
+// Get all hurt books with pagination
+async function getHurtBooks(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
@@ -261,10 +261,10 @@ async function getUsedBooks(req, res) {
     const filter = req.query.filter || 'all'; // 'all', 'published', 'unpublished', 'in-stock', 'out-of-stock'
     
     // Get books from Shopify
-    const usedBooks = await productService.getAllUsedBooks(page, limit, searchTerm, filter);
+    const HurtBooks = await productService.getAllHurtBooks(page, limit, searchTerm, filter);
     
     // Get total count for pagination
-    const totalCount = await productService.getUsedBooksCount(searchTerm, filter);
+    const totalCount = await productService.getHurtBooksCount(searchTerm, filter);
     
     // Calculate pagination values
     const totalPages = Math.ceil(totalCount / limit);
@@ -272,8 +272,8 @@ async function getUsedBooks(req, res) {
     const hasPrevPage = page > 1;
     
     res.render('dashboard/books', {
-      title: 'Used Books Management',
-      books: usedBooks,
+      title: 'hurt Books Management',
+      books: HurtBooks,
       pagination: {
         page,
         limit,
@@ -287,10 +287,10 @@ async function getUsedBooks(req, res) {
       user: req.user
     });
   } catch (error) {
-    logger.error(`Error getting used books: ${error.message}`);
-    req.flash('error', 'Failed to load used books');
+    logger.error(`Error getting hurt books: ${error.message}`);
+    req.flash('error', 'Failed to load hurt books');
     res.render('dashboard/books', {
-      title: 'Used Books Management',
+      title: 'hurt Books Management',
       books: [],
       pagination: { page: 1, limit: 20, totalCount: 0, totalPages: 0, hasNextPage: false, hasPrevPage: false },
       searchTerm: '',
@@ -303,7 +303,7 @@ async function getUsedBooks(req, res) {
 // Other controller methods for book management...
 
 module.exports = {
-  getUsedBooks,
+  getHurtBooks,
   // Other methods...
 };
 ```
@@ -406,7 +406,7 @@ jobs:
       - name: Install Railway CLI
         run: npm i -g @railway/cli
       - name: Deploy to Railway staging
-        run: railway up --service used-books-automation-staging
+        run: railway up --service hurt-books-automation-staging
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
@@ -419,7 +419,7 @@ jobs:
       - name: Install Railway CLI
         run: npm i -g @railway/cli
       - name: Deploy to Railway production
-        run: railway up --service used-books-automation
+        run: railway up --service hurt-books-automation
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 ```
@@ -486,7 +486,7 @@ router.get('/', async (req, res) => {
       usage: {
         rss: Math.round(memoryUsage.rss / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB',
-        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB',
+        heapHurt: Math.round(memoryUsage.heapHurt / 1024 / 1024) + 'MB',
         percent: Math.round(memoryUsagePercent) + '%'
       }
     };
@@ -679,4 +679,4 @@ process.on('unhandledRejection', (reason, promise) => {
 startServer();
 ```
 
-This technical architecture and code structure provides a comprehensive foundation for implementing both the admin dashboard and cloud automation for your Used Books Automation system.
+This technical architecture and code structure provides a comprehensive foundation for implementing both the admin dashboard and cloud automation for your hurt Books Automation system.

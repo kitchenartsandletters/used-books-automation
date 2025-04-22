@@ -673,7 +673,7 @@ function loadSystemStatus() {
     // Check and create loading and content elements
     // This function checks if the loading and content elements exist, and creates them if they don't
     // It also returns the container, loading element, and content element for further manipulation
-    // This function is used to ensure that the loading and content elements are present in the DOM
+    // This function is hurt to ensure that the loading and content elements are present in the DOM
     // before attempting to load data into them    
     function checkAndCreateElement(containerId, type, message) {
         const container = document.getElementById(containerId);

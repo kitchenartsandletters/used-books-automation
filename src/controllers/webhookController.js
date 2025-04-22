@@ -1,6 +1,6 @@
 // src/controllers/webhookController.js
 const shopifyClient = require('../utils/shopifyClient');
-const usedBookManager = require('../services/usedBookManager');
+const hurtBookManager = require('../services/hurtBookManager');
 const logger = require('../utils/logger');
 
 /**
@@ -43,7 +43,7 @@ async function handleInventoryLevelUpdate(req, res) {
       
       // Process the inventory change
       logger.info(`Processing inventory change for product: ${productId}, variant: ${variant.id}`);
-      await usedBookManager.processInventoryChange(
+      await hurtBookManager.processInventoryChange(
         inventory_item_id,
         variant.id,
         productId

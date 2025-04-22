@@ -1,4 +1,4 @@
-// src/services/usedBookManager.js (updated with SEO management)
+// src/services/hurtBookManager.js (updated with SEO management)
 const productService = require('./productService');
 const inventoryService = require('./inventoryService');
 const redirectService = require('./redirectService');
@@ -7,7 +7,7 @@ const logger = require('../utils/logger');
 const notificationService = require('../utils/notificationService');
 const shopifyClient = require('../utils/shopifyClient');
 
-console.log('Loading usedBookManager.js with services:', {
+console.log('Loading hurtBookManager.js with services:', {
   hasProductService: !!productService,
   hasInventoryService: !!inventoryService,
   hasRedirectService: !!redirectService,
@@ -28,27 +28,27 @@ async function processInventoryChange(inventoryItemId, variantId, productId) {
       return;
     }
     
-    // Check if this is a used book product
-    if (!productService.isUsedBookHandle(product.handle)) {
-      logger.info(`Product ${productId} is not a used book, skipping`);
+    // Check if this is a hurt book product
+    if (!productService.isHurtBookHandle(product.handle)) {
+      logger.info(`Product ${productId} is not a hurt book, skipping`);
       return;
     }
     
     // Check if the variant is in stock
     const isInStock = await inventoryService.isVariantInStock(variantId, inventoryItemId);
-    logger.info(`Used book ${product.handle} stock status: ${isInStock ? 'in stock' : 'out of stock'}`);
+    logger.info(`hurt book ${product.handle} stock status: ${isInStock ? 'in stock' : 'out of stock'}`);
     
     // Find the corresponding new book handle
-    const newBookHandle = productService.getNewBookHandleFromUsed(product.handle);
+    const newBookHandle = productService.getNewBookHandleFromHurt(product.handle);
     
     // Always set the canonical URL regardless of stock status
-    // This ensures SEO points to the main product even when the used book is in stock
-    const canonicalSet = await seoService.updateUsedBookCanonicals(product, newBookHandle);
+    // This ensures SEO points to the main product even when the hurt book is in stock
+    const canonicalSet = await seoService.updateHurtBookCanonicals(product, newBookHandle);
     
     if (isInStock) {
       // Product is in stock, so publish it and remove any redirects
       await productService.setProductPublishStatus(productId, true);
-      logger.info(`Published used book ${product.handle} as it's now in stock`);
+      logger.info(`Published hurt book ${product.handle} as it's now in stock`);
       
       // Check if there's a redirect to remove
       try {
@@ -72,7 +72,7 @@ async function processInventoryChange(inventoryItemId, variantId, productId) {
     } else {
       // Product is out of stock, so unpublish it and set up redirects
       await productService.setProductPublishStatus(productId, false);
-      logger.info(`Unpublished used book ${product.handle} as it's out of stock`);
+      logger.info(`Unpublished hurt book ${product.handle} as it's out of stock`);
       
       // Create redirect to new book page if it doesn't exist
       try {

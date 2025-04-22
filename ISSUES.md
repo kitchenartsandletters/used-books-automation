@@ -1,4 +1,4 @@
-# Used Books Automation - Development Progress
+# hurt Books Automation - Development Progress
 
 ## Successfully Developed
 
@@ -28,7 +28,7 @@
    - Added proper module exports for controllers
 
 5. **SEO Management**
-   - Implemented automatic canonical tag management for used books
+   - Implemented automatic canonical tag management for hurt books
 
 6. **Authentication**
    - Password comparison with bcrypt now passes
@@ -109,11 +109,11 @@
 5. **KIT-61: Extract UI Elements for final approval**
    - Shopify UI title naming convention (update project docs)
    - finalize condition types
-   - used book copy
+   - hurt book copy
 
 6. **KIT-62: enhancedCacheService.js literal script displaying in status areas of dashboard**
 
-7. **KIT-69: Relaunch as "HURT" books rather than "USED"**
+7. **KIT-69: Relaunch as "HURT" books rather than "hurt"**
    - refactor product handle requirements
 
 8. **KIT-70: Finalize product condition grades and copy for each**

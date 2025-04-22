@@ -25,10 +25,10 @@ async function updateSystemStats() {
     const redirects = await getActiveRedirects();
     systemStats.totalRedirects = redirects.length;
     
-    // Get used book products
-    const usedBooks = await cronService.getAllUsedBooks();
-    systemStats.totalProducts = usedBooks.length;
-    systemStats.publishedProducts = usedBooks.filter(p => p.published_at !== null).length;
+    // Get hurt book products
+    const HurtBooks = await cronService.getAllHurtBooks();
+    systemStats.totalProducts = HurtBooks.length;
+    systemStats.publishedProducts = HurtBooks.filter(p => p.published_at !== null).length;
     systemStats.unpublishedProducts = systemStats.totalProducts - systemStats.publishedProducts;
     
     return systemStats;
@@ -53,7 +53,7 @@ async function getDashboard(req, res) {
     res.render('dashboard', {
       stats: systemStats,
       redirects,
-      title: 'Used Books Automation Dashboard'
+      title: 'hurt Books Automation Dashboard'
     });
   } catch (error) {
     logger.error(`Error rendering dashboard: ${error.message}`);
@@ -77,13 +77,13 @@ async function getActiveRedirects() {
       return [];
     }
     
-    // Filter to only include redirects for used books
-    const usedBookRedirects = response.body.redirects.filter(redirect => 
+    // Filter to only include redirects for hurt books
+    const HurtBookRedirects = response.body.redirects.filter(redirect => 
       redirect.path && redirect.path.includes('/products/') && 
-      redirect.path.includes('-used-')
+      redirect.path.includes('-hurt-')
     );
     
-    return usedBookRedirects;
+    return HurtBookRedirects;
   } catch (error) {
     logger.error(`Error getting active redirects: ${error.message}`);
     return [];
@@ -112,7 +112,7 @@ async function runManualScan(req, res) {
     systemStats.lastScanTime = new Date().toISOString();
     
     // Start the scan in background
-    cronService.processAllUsedBooks()
+    cronService.processAllHurtBooks()
       .then(() => {
         logger.info('Manual scan completed');
       })
@@ -166,10 +166,10 @@ async function manualOverride(req, res) {
       });
     }
     
-    // Check if it's a used book
-    if (!productService.isUsedBookHandle(product.handle)) {
+    // Check if it's a hurt book
+    if (!productService.isHurtBookHandle(product.handle)) {
       return res.status(400).json({
-        error: 'This is not a used book product'
+        error: 'This is not a hurt book product'
       });
     }
     
@@ -189,7 +189,7 @@ async function manualOverride(req, res) {
       await productService.setProductPublishStatus(productId, false);
       
       // Create redirect if needed
-      const newBookHandle = productService.getNewBookHandleFromUsed(product.handle);
+      const newBookHandle = productService.getNewBookHandleFromHurt(product.handle);
       const existingRedirect = await redirectService.findRedirectByPath(product.handle);
       
       if (!existingRedirect) {

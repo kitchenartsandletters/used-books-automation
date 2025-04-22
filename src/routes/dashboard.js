@@ -20,7 +20,7 @@ router.get('/redirects', authMiddleware, dashboardController.getRedirects);
 
 /**
  * GET /dashboard/books
- * Used books management page
+ * hurt books management page
  */
 router.get('/books', authMiddleware, dashboardController.getBooks);
 

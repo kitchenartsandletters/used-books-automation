@@ -92,7 +92,7 @@ const getLoginPage = (req, res) => {
   
   // Render login page
   res.render('login', {
-    title: 'Login - Used Books Automation',
+    title: 'Login - hurt Books Automation',
     error: req.flash ? req.flash('error') : null,
     success: req.flash ? req.flash('success') : null
   });

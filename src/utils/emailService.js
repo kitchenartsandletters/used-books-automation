@@ -31,7 +31,7 @@ async function sendEmail(subject, message, recipient = null) {
     const msg = {
       to: recipient || config.notifications.email.to,
       from: config.notifications.email.from,
-      subject: `[Used Books Automation] ${subject}`,
+      subject: `[hurt Books Automation] ${subject}`,
       html: message,
     };
     

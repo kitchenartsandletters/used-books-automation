@@ -679,28 +679,28 @@
   {%- else -%}
     <div class="rte">
     {% comment %}
-      If we're on a new book page (i.e. product handle doesn't include '-used-'),
+      If we're on a new book page (i.e. product handle doesn't include '-hurt-'),
       loop through potential conditions and only output links for those that exist and are available.
     {% endcomment %}
     {% assign conditions = "like-new,very-good,good,acceptable" | split: "," %}
-    {% assign used_links = "" %}
+    {% assign Hurt_links = "" %}
     {% for condition in conditions %}
-      {% assign used_handle = product.handle | append: '-used-' | append: condition %}
-      {% assign used_product = all_products[used_handle] %}
-      {% if used_product and used_product != blank and used_product.available %}
-        {% assign used_links = used_links | append: '<p><a href="' | append: used_product.url | append: '" class="used-book-link">View Used Copy (' | append: condition | append: ')</a></p>' %}
+      {% assign Hurt_handle = product.handle | append: '-hurt-' | append: condition %}
+      {% assign Hurt_product = all_products[Hurt_handle] %}
+      {% if Hurt_product and Hurt_product != blank and Hurt_product.available %}
+        {% assign Hurt_links = Hurt_links | append: '<p><a href="' | append: Hurt_product.url | append: '" class="hurt-book-link">View hurt Copy (' | append: condition | append: ')</a></p>' %}
       {% endif %}
     {% endfor %}
-    {% if used_links != blank %}
-      <div class="used-book-section">
-        <p>Looking for a used copy?</p>
-        {{ used_links }}
+    {% if Hurt_links != blank %}
+      <div class="hurt-book-section">
+        <p>Looking for a hurt copy?</p>
+        {{ Hurt_links }}
       </div>
     {% endif %}
 
-    {%- comment %} Insert condition copy for damaged books if we're on a used book page {% endcomment %}
-    {% if product.handle contains '-used-' %}
-      {% assign parts = product.handle | split: '-used-' %}
+    {%- comment %} Insert condition copy for damaged books if we're on a hurt book page {% endcomment %}
+    {% if product.handle contains '-hurt-' %}
+      {% assign parts = product.handle | split: '-hurt-' %}
       {% assign condition = parts[1] %}
       {% if condition == "like-new" %}
         {% assign condition_copy = "This copy is in nearly pristine condition—virtually indistinguishable from a new book with minimal or no signs of wear." %}
@@ -1634,19 +1634,19 @@
 
                     {%- else -%}
                       <div class="rte">
-                        {% if product_handle contains '-used' %}
-                          {% assign used_product_handle = product_handle %}
+                        {% if product_handle contains '-hurt' %}
+                          {% assign Hurt_product_handle = product_handle %}
                         {% else %}
-                          {% assign used_product_handle = product_handle | append: '-used' %}
+                          {% assign Hurt_product_handle = product_handle | append: '-hurt' %}
                         {% endif %}
                         
-                        {% assign used_product = all_products[used_product_handle] %}
+                        {% assign Hurt_product = all_products[Hurt_product_handle] %}
                         
-                        {% if used_product and used_product.available %}
-                          <div class="used-book-section">
-                            <p>Looking for a used copy?</p>
-                            <a href="{{ used_product.url }}" class="used-book-link">
-                              View Used Copy ({{ used_product.price | money }})</a>
+                        {% if Hurt_product and Hurt_product.available %}
+                          <div class="hurt-book-section">
+                            <p>Looking for a hurt copy?</p>
+                            <a href="{{ Hurt_product.url }}" class="hurt-book-link">
+                              View hurt Copy ({{ Hurt_product.price | money }})</a>
                           </div>
                         {% endif %}
                         {{ product.description }}
@@ -4163,7 +4163,7 @@
       "settings": [
         {
           "type": "paragraph",
-          "content": "Line items are used to add custom options such as engraving and gift wrapping."
+          "content": "Line items are hurt to add custom options such as engraving and gift wrapping."
         },
         {
           "type": "header",
@@ -6075,7 +6075,7 @@
           "id": "popup_trigger",
           "label": "Variant trigger name(s)",
           "default": "Size\nGröße\nTaille\nTaglia\nTalla",
-          "info": "Pop-up can be used on alternative variants to 'Size'. You may also add translations here. One entry per line"
+          "info": "Pop-up can be hurt on alternative variants to 'Size'. You may also add translations here. One entry per line"
         },
         {
           "type": "text",

@@ -6,7 +6,7 @@ The dashboard has been experiencing slow loading times due to full catalog parsi
 
 ## Solution Implemented
 
-We've implemented a comprehensive solution focused on:
+We've implemented a comprehensive solution focHurt on:
 
 1. Creating a caching strategy for product and inventory data
 2. Implementing asynchronous loading for dashboard components  
@@ -36,13 +36,13 @@ We've implemented a comprehensive solution focused on:
 
 - Created new API endpoints for asynchronous data loading:
   - `/api/dashboard/stats` - Dashboard statistics
-  - `/api/dashboard/books` - Used books with pagination
+  - `/api/dashboard/books` - hurt books with pagination
   - `/api/dashboard/redirects` - Redirect management
   - `/api/dashboard/logs` - System logs and notifications
 
 #### 4. Improvements to Shopify API Integration
 
-- Enhanced getAllUsedBooks method in cronService.js to support:
+- Enhanced getAllHurtBooks method in cronService.js to support:
   - Pagination with efficient API request batching
   - Optional item limits to prevent excessive loading
   - Proper rate limit handling with automatic retry

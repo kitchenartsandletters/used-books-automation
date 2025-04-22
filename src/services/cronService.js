@@ -1,17 +1,17 @@
 // src/services/cronService.js
 const shopifyClient = require('../utils/shopifyClient');
-const usedBookManager = require('./usedBookManager');
+const hurtBookManager = require('./hurtBookManager');
 const backupService = require('../utils/backupService');
 const notificationService = require('../utils/notificationService');
 const logger = require('../utils/logger');
 const cron = require('node-cron');
 
 /**
- * Get used book products with optional limit
+ * Get hurt book products with optional limit
  * @param {number} maxItems - Maximum number of items to return
- * @returns {Promise<Array>} Array of used book products
+ * @returns {Promise<Array>} Array of hurt book products
  */
-async function getAllUsedBooks(maxItems = null, quickLoad = false) {
+async function getAllHurtBooks(maxItems = null, quickLoad = false) {
   try {
     if (quickLoad) {
       // Just get the first page with a small limit
@@ -23,16 +23,16 @@ async function getAllUsedBooks(maxItems = null, quickLoad = false) {
         return [];
       }
       
-      // Filter for used books based on the handle pattern
-      const usedBooks = response.body.products.filter(product => {
-        return product.handle && product.handle.includes('-used-');
+      // Filter for hurt books based on the handle pattern
+      const HurtBooks = response.body.products.filter(product => {
+        return product.handle && product.handle.includes('-hurt-');
       });
       
-      logger.info(`Quick loaded ${usedBooks.length} used books for dashboard`);
-      return usedBooks;
+      logger.info(`Quick loaded ${HurtBooks.length} hurt books for dashboard`);
+      return HurtBooks;
     }
 
-    logger.info(`Starting used books scan${maxItems ? ` (limited to ${maxItems} items)` : ''}`);
+    logger.info(`Starting hurt books scan${maxItems ? ` (limited to ${maxItems} items)` : ''}`);
     
     let products = [];
     let hasMoreProducts = true;
@@ -81,17 +81,17 @@ async function getAllUsedBooks(maxItems = null, quickLoad = false) {
           }
         }
         
-        // Filter for used books based on the handle pattern - do this efficiently
-        const usedBooks = response.body.products.filter(product => {
-          return product.handle && product.handle.includes('-used-');
+        // Filter for hurt books based on the handle pattern - do this efficiently
+        const HurtBooks = response.body.products.filter(product => {
+          return product.handle && product.handle.includes('-hurt-');
         });
         
         // Only log the count, not each individual book (reduces log overhead)
-        if (usedBooks.length > 0) {
-          logger.info(`Found ${usedBooks.length} used books in batch ${requestCount}`);
+        if (HurtBooks.length > 0) {
+          logger.info(`Found ${HurtBooks.length} hurt books in batch ${requestCount}`);
         }
         
-        products = [...products, ...usedBooks];
+        products = [...products, ...HurtBooks];
         
         // Check if we've reached the maxItems limit
         if (maxItems && products.length >= maxItems) {
@@ -120,28 +120,28 @@ async function getAllUsedBooks(maxItems = null, quickLoad = false) {
       logger.warn(`Reached maximum request threshold (${MAX_REQUESTS}). Some products may not have been scanned.`);
     }
     
-    logger.info(`Completed catalog scan. Found ${products.length} used books in total after ${requestCount} requests`);
+    logger.info(`Completed catalog scan. Found ${products.length} hurt books in total after ${requestCount} requests`);
     return products;
   } catch (error) {
-    logger.error(`Error fetching used books: ${error.message}`);
+    logger.error(`Error fetching hurt books: ${error.message}`);
     throw error;
   }
 }
   
 /**
- * Process all used books
+ * Process all hurt books
  */
-async function processAllUsedBooks() {
+async function processAllHurtBooks() {
   try {
-    logger.info('Starting scheduled check of all used books');
+    logger.info('Starting scheduled check of all hurt books');
     
-    const usedBooks = await getAllUsedBooks();
-    logger.info(`Found ${usedBooks.length} used books to process`);
+    const HurtBooks = await getAllHurtBooks();
+    logger.info(`Found ${HurtBooks.length} hurt books to process`);
     
-    for (const product of usedBooks) {
+    for (const product of HurtBooks) {
       // Process each variant of the product
       for (const variant of product.variants) {
-        await usedBookManager.processInventoryChange(
+        await hurtBookManager.processInventoryChange(
           variant.inventory_item_id,
           variant.id,
           product.id
@@ -149,7 +149,7 @@ async function processAllUsedBooks() {
       }
     }
     
-    logger.info('Completed scheduled check of all used books');
+    logger.info('Completed scheduled check of all hurt books');
   } catch (error) {
     logger.error(`Error in scheduled job: ${error.message}`);
   }
@@ -159,11 +159,11 @@ async function processAllUsedBooks() {
  * Start the scheduled jobs
  */
 function startScheduledJobs() {
-    // Process all used books every 30 minutes
+    // Process all hurt books every 30 minutes
     const inventoryJob = cron.schedule('*/30 * * * *', async () => {
       global.lastScanTime = new Date().toISOString();
       try {
-        await processAllUsedBooks();
+        await processAllHurtBooks();
         logger.info('Scheduled inventory check completed successfully');
       } catch (error) {
         logger.error(`Error in scheduled inventory check: ${error.message}`);
@@ -206,7 +206,7 @@ function startScheduledJobs() {
   }
   
   module.exports = {
-    getAllUsedBooks,
-    processAllUsedBooks,
+    getAllHurtBooks,
+    processAllHurtBooks,
     startScheduledJobs
   };

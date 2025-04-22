@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Used Books Automation - Dashboard</title>
+      <title>hurt Books Automation - Dashboard</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; }
@@ -21,11 +21,11 @@ router.get('/', (req, res) => {
     </head>
     <body>
       <div class="container">
-        <h1>Used Books Automation Dashboard</h1>
+        <h1>hurt Books Automation Dashboard</h1>
         
         <div class="card">
           <h2>Manual Controls</h2>
-          <button class="btn" id="scan-btn">Scan All Used Books</button>
+          <button class="btn" id="scan-btn">Scan All hurt Books</button>
           <p id="scan-status"></p>
         </div>
         

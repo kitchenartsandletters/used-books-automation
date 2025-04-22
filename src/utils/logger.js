@@ -7,7 +7,7 @@ const logger = winston.createLogger({
     winston.format.timestamp(),
     winston.format.json()
   ),
-  defaultMeta: { service: 'used-books-automation' },
+  defaultMeta: { service: 'hurt-books-automation' },
   transports: [
     new winston.transports.Console({
       format: winston.format.simple(),

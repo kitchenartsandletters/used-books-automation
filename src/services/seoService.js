@@ -40,9 +40,9 @@ async function setCanonicalUrl(productId, canonicalUrl) {
 }
 
 /**
- * Set canonical URL for a used book to point to its new book equivalent
+ * Set canonical URL for a hurt book to point to its new book equivalent
  */
-async function updateUsedBookCanonicals(product, newBookHandle) {
+async function updateHurtBookCanonicals(product, newBookHandle) {
   try {
     if (!product || !product.id || !product.handle || !newBookHandle) {
       logger.warn(`Invalid inputs for updating canonical URL`);
@@ -58,12 +58,12 @@ async function updateUsedBookCanonicals(product, newBookHandle) {
     
     return result;
   } catch (error) {
-    logger.error(`Error updating canonical URL for used book ${product.id}: ${error.message}`);
+    logger.error(`Error updating canonical URL for hurt book ${product.id}: ${error.message}`);
     return null;
   }
 }
 
 module.exports = {
   setCanonicalUrl,
-  updateUsedBookCanonicals
+  updateHurtBookCanonicals
 };

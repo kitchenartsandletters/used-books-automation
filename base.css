@@ -5459,9 +5459,9 @@ predictive-search[dropdown][open=true] predictive-search-results {
 /*# sourceMappingURL=base.css.map */
 
 /* ==========================================================================
-   #USED BOOKS
+   #hurt BOOKS
    ========================================================================== */
-.used-book-section {
+.hurt-book-section {
   background-color: #f8f8f8; /* Light gray background */
   padding: 10px 15px;
   margin: 15px 0;
@@ -5469,18 +5469,18 @@ predictive-search[dropdown][open=true] predictive-search-results {
   border: 1px solid #ddd;
 }
 
-.used-book-section p {
+.hurt-book-section p {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.used-book-link {
+.hurt-book-link {
   display: inline-block;
   color: #0073e6; /* Shopify blue */
   text-decoration: none;
   font-weight: bold;
 }
 
-.used-book-link:hover {
+.hurt-book-link:hover {
   text-decoration: underline;
 }

@@ -42,26 +42,26 @@ async function setProductPublishStatus(productId, shouldPublish) {
   }
 
 /**
- * Checks if a handle is for a used book
+ * Checks if a handle is for a hurt book
  */
-function isUsedBookHandle(handle) {
-  // Look for the pattern that matches our used book handle convention
-  // Specifically "-used-condition" at the end of the handle
-  // e.g., "book-title-used-very-good" or "book-title-used-acceptable"
-  const usedPattern = /-used-(like-new|very-good|good|acceptable)$/;
-  return usedPattern.test(handle);
+function isHurtBookHandle(handle) {
+  // Look for the pattern that matches our hurt book handle convention
+  // Specifically "-hurt-condition" at the end of the handle
+  // e.g., "book-title-hurt-very-good" or "book-title-hurt-acceptable"
+  const HurtPattern = /-hurt-(like-new|very-good|good|acceptable)$/;
+  return HurtPattern.test(handle);
 }
 
 /**
- * Get the corresponding new book handle from a used book handle
+ * Get the corresponding new book handle from a hurt book handle
  */
-function getNewBookHandleFromUsed(usedBookHandle) {
-  return usedBookHandle.split('-used-')[0];
+function getNewBookHandleFromHurt(HurtBookHandle) {
+  return HurtBookHandle.split('-hurt-')[0];
 }
 
 module.exports = {
   getProductById,
   setProductPublishStatus,
-  isUsedBookHandle,
-  getNewBookHandleFromUsed
+  isHurtBookHandle,
+  getNewBookHandleFromHurt
 };

@@ -1,4 +1,4 @@
-# Used Books Automation - Implementation Plan
+# hurt Books Automation - Implementation Plan
 
 ## Part 1: Admin Dashboard Implementation
 
@@ -20,7 +20,7 @@
 #### 1.3 Core Dashboard Pages
 - Home/Overview page with system stats summary
 - Redirects management page
-- Used Books listing page
+- hurt Books listing page
 - System logs viewer
 - Settings page
 
@@ -28,7 +28,7 @@
 
 #### 2.1 Dashboard Home/Overview
 - Create real-time stats display showing:
-  - Total used books count
+  - Total hurt books count
   - Books in/out of stock counts
   - Active redirects count 
   - Last scan time
@@ -43,8 +43,8 @@
 - Add manual create/edit/delete functions for redirects
 - Include redirect testing functionality
 
-#### 2.3 Used Books Management
-- Implement a table listing all used books
+#### 2.3 hurt Books Management
+- Implement a table listing all hurt books
 - Show key information (title, stock status, handle, published status)
 - Add search and filter capabilities
 - Include direct links to edit products in Shopify

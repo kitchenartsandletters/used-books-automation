@@ -33,10 +33,10 @@ async function getBooksPaginated(page, limit, filter = 'all', search = '') {
     
     // This prevents loading the entire catalog at once - get the list but with a hard limit
     // For a production app, this would use database pagination
-    const usedBooks = await cronService.getAllUsedBooks(250); // Hard limit to prevent excessive loading
+    const HurtBooks = await cronService.getAllHurtBooks(250); // Hard limit to prevent excessive loading
     
     // Apply filters
-    let filteredBooks = usedBooks;
+    let filteredBooks = HurtBooks;
     
     // Apply search filter if provided
     if (search) {
@@ -126,10 +126,10 @@ async function updateSystemStats() {
     const redirects = await getActiveRedirects();
     systemStats.totalRedirects = redirects.length;
     
-    // Get used book products
-    const usedBooks = await cronService.getAllUsedBooks();
-    systemStats.totalProducts = usedBooks.length;
-    systemStats.publishedBooks = usedBooks.filter(p => p.published_at !== null).length;
+    // Get hurt book products
+    const HurtBooks = await cronService.getAllHurtBooks();
+    systemStats.totalProducts = HurtBooks.length;
+    systemStats.publishedBooks = HurtBooks.filter(p => p.published_at !== null).length;
     systemStats.unpublishedBooks = systemStats.totalProducts - systemStats.publishedBooks;
     
     return systemStats;
@@ -153,13 +153,13 @@ async function getActiveRedirects() {
       return [];
     }
     
-    // Filter to only include redirects for used books
-    const usedBookRedirects = response.body.redirects.filter(redirect => 
+    // Filter to only include redirects for hurt books
+    const HurtBookRedirects = response.body.redirects.filter(redirect => 
       redirect.path && redirect.path.includes('/products/') && 
-      redirect.path.includes('-used-')
+      redirect.path.includes('-hurt-')
     );
     
-    return usedBookRedirects;
+    return HurtBookRedirects;
   } catch (error) {
     logger.error(`Error getting active redirects: ${error.message}`);
     return [];
@@ -174,7 +174,7 @@ async function getDashboard(req, res) {
     // Render the dashboard immediately with minimal data
     // Don't wait for expensive operations
     res.render('../views/dashboard/index', {
-      title: 'Dashboard - Used Books Automation',
+      title: 'Dashboard - hurt Books Automation',
       stats: {
         lastScanTime: global.lastScanTime || 'Not yet run',
         webhooksRegistered: false,
@@ -217,7 +217,7 @@ async function getRedirects(req, res) {
     
     // Render redirects view
     res.render('dashboard/redirects', {
-      title: 'Redirects Management - Used Books Automation',
+      title: 'Redirects Management - hurt Books Automation',
       redirects,
       user: req.user
     });
@@ -242,7 +242,7 @@ async function runManualScan(req, res) {
     systemStats.lastScanTime = new Date().toISOString();
     
     // Start the scan in background
-    cronService.processAllUsedBooks()
+    cronService.processAllHurtBooks()
       .then(() => {
         logger.info('Manual scan completed');
       })
@@ -279,14 +279,14 @@ async function getBooks(req, res) {
     const filter = req.query.filter || 'all'; // all, published, unpublished
     const notifications = notificationService.getHistory(5);
     
-    // Get used books
-    const usedBooks = await cronService.getAllUsedBooks(100);
+    // Get hurt books
+    const HurtBooks = await cronService.getAllHurtBooks(100);
 
     // Log books info for debugging
-    logger.info(`Books found: ${usedBooks.length}`);
+    logger.info(`Books found: ${HurtBooks.length}`);
     
     // Apply filters
-    let filteredBooks = usedBooks;
+    let filteredBooks = HurtBooks;
     
     // Apply search filter if provided
     if (searchTerm) {
@@ -319,7 +319,7 @@ async function getBooks(req, res) {
     
     // Render books view
     res.render('dashboard/books', {
-      title: 'Books Management - Used Books Automation',
+      title: 'Books Management - hurt Books Automation',
       books: paginatedBooks,
       pagination: {
         page,
@@ -376,10 +376,10 @@ async function manualOverride(req, res) {
       });
     }
     
-    // Check if it's a used book
-    if (!productService.isUsedBookHandle(product.handle)) {
+    // Check if it's a hurt book
+    if (!productService.isHurtBookHandle(product.handle)) {
       return res.status(400).json({
-        error: 'This is not a used book product'
+        error: 'This is not a hurt book product'
       });
     }
     
@@ -399,7 +399,7 @@ async function manualOverride(req, res) {
       await productService.setProductPublishStatus(productId, false);
       
       // Create redirect if needed
-      const newBookHandle = productService.getNewBookHandleFromUsed(product.handle);
+      const newBookHandle = productService.getNewBookHandleFromHurt(product.handle);
       const existingRedirect = await redirectService.findRedirectByPath(product.handle);
       
       if (!existingRedirect) {
@@ -424,7 +424,7 @@ async function getLogs(req, res) {
     
     // Render logs view
     res.render('dashboard/logs', {
-      title: 'System Logs - Used Books Automation',
+      title: 'System Logs - hurt Books Automation',
       notifications,
       user: req.user
     });
@@ -451,7 +451,7 @@ async function getSettings(req, res) {
     
     // Render settings view
     res.render('dashboard/settings', {
-      title: 'Settings - Used Books Automation',
+      title: 'Settings - hurt Books Automation',
       backups,
       config: {
         shopUrl: process.env.SHOP_URL,
@@ -485,7 +485,7 @@ async function runScan(req, res) {
     global.lastScanTime = systemStats.lastScanTime;
     
     // Start the scan in background
-    cronService.processAllUsedBooks()
+    cronService.processAllHurtBooks()
       .then(() => {
         logger.info('Manual scan completed');
         notificationService.notify('info', 'Manual Scan Completed', 'The system scan was completed successfully');

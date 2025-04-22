@@ -3,19 +3,19 @@ console.log('Loading apiController.js');
 
 const shopifyClient = require('../utils/shopifyClient');
 const productService = require('../services/productService');
-const usedBookManager = require('../services/usedBookManager');
+const hurtBookManager = require('../services/hurtBookManager');
 const cronService = require('../services/cronService');
 const logger = require('../utils/logger');
 
-// Replace the existing scanAllUsedBooks function with this simpler version
-async function scanAllUsedBooks(req, res) {
+// Replace the existing scanAllHurtBooks function with this simpler version
+async function scanAllHurtBooks(req, res) {
   try {
-    logger.info('Manual scan of all used books initiated');
+    logger.info('Manual scan of all hurt books initiated');
     
     // Return a simple response for now to bypass the client issue
     res.status(200).json({ message: 'Scan not implemented yet' });
   } catch (error) {
-    logger.error(`Error scanning all used books: ${error.message}`);
+    logger.error(`Error scanning all hurt books: ${error.message}`);
     res.status(500).json({ error: error.message });
   }
 }
@@ -33,7 +33,7 @@ async function triggerProductCheck(req, res) {
       });
     }
     
-    const result = await usedBookManager.processInventoryChange(
+    const result = await hurtBookManager.processInventoryChange(
       inventoryItemId,
       variantId,
       productId
@@ -47,21 +47,21 @@ async function triggerProductCheck(req, res) {
 }
 
 /**
- * Scan all used book products and update them
+ * Scan all hurt book products and update them
  */
-async function scanAllUsedBooks(req, res) {
+async function scanAllHurtBooks(req, res) {
   try {
-    // Use the cronService to process all used books
-    logger.info('Manual scan of all used books initiated');
+    // Use the cronService to process all hurt books
+    logger.info('Manual scan of all hurt books initiated');
     
     // Start the process but don't wait for it to complete
-    cronService.processAllUsedBooks()
+    cronService.processAllHurtBooks()
       .then(() => logger.info('Manual scan completed'))
       .catch(err => logger.error(`Error in manual scan: ${err.message}`));
     
     res.status(200).json({ message: 'Scan initiated' });
   } catch (error) {
-    logger.error(`Error scanning all used books: ${error.message}`);
+    logger.error(`Error scanning all hurt books: ${error.message}`);
     res.status(500).json({ error: error.message });
   }
 }
@@ -114,7 +114,7 @@ async function lookupProduct(req, res) {
 
 module.exports = {
   triggerProductCheck,
-  scanAllUsedBooks,
+  scanAllHurtBooks,
   testShopifyClient,
   lookupProduct
 };
